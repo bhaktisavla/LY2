@@ -23,7 +23,7 @@ html,body{
     font-family:Arial,sans-serif;
 }
 
-/* ---------------- SPLASH SCREEN ---------------- */
+/* ---------------- SPLASH ---------------- */
 
 #splash{
     position:fixed;
@@ -32,14 +32,14 @@ html,body{
     display:flex;
     justify-content:center;
     align-items:center;
-    z-index:9999;
+    z-index:99999;
 }
 
 #splash img{
     width:min(320px,70vw);
 }
 
-/* ---------------- GAME AREA ---------------- */
+/* ---------------- GAME ---------------- */
 
 #game{
     width:100%;
@@ -48,24 +48,13 @@ html,body{
     position:relative;
     overflow:hidden;
 
-    /* GARDEN BACKGROUND */
     background-image:url("assets/garden.jpg");
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
 }
 
-/* Soft Overlay */
-
-#game::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:rgba(255,255,255,0.08);
-    z-index:0;
-}
-
-/* ---------------- ROUNDS ---------------- */
+/* ---------------- ROUND ---------------- */
 
 .round{
     position:absolute;
@@ -75,7 +64,6 @@ html,body{
     justify-content:space-between;
     align-items:center;
     padding:10px;
-    z-index:2;
 }
 
 .round.active{
@@ -95,15 +83,15 @@ html,body{
 }
 
 .questionBox{
-    background:#fff7c8;
+    background:#fff7c7;
     color:#5b3b00;
     padding:12px 18px;
     border-radius:18px;
     font-size:clamp(18px,2.5vw,30px);
     font-weight:bold;
     text-align:center;
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);
     max-width:82%;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
 
 .speakBtn{
@@ -111,13 +99,9 @@ html,body{
     height:52px;
     border:none;
     border-radius:50%;
-    background:#93d7a7;
+    background:#94d7a8;
     font-size:24px;
     cursor:pointer;
-}
-
-.speakBtn:active{
-    transform:scale(0.95);
 }
 
 /* ---------------- IMAGE AREA ---------------- */
@@ -132,7 +116,7 @@ html,body{
     overflow:hidden;
 }
 
-/* GAME IMAGE */
+/* IMAGE */
 
 .sceneImage{
     width:100%;
@@ -141,17 +125,20 @@ html,body{
     object-fit:contain;
 
     position:absolute;
+    inset:0;
+    margin:auto;
+
     z-index:1;
 
     pointer-events:none;
 }
 
-/* DRAWING CANVAS */
+/* CANVAS */
 
 .drawCanvas{
     position:absolute;
-    top:0;
-    left:0;
+    inset:0;
+
     width:100%;
     height:100%;
 
@@ -161,32 +148,30 @@ html,body{
     pointer-events:auto;
 }
 
-/* ---------------- FINISH SCREEN ---------------- */
+/* ---------------- FINISH ---------------- */
 
 #finishScreen{
     position:absolute;
     inset:0;
+    background:rgba(255,255,255,0.92);
+
     display:none;
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    background:rgba(255,255,255,0.92);
-    z-index:99999;
-    overflow:hidden;
+
+    z-index:999999;
 }
 
 #finishScreen h1{
     font-size:clamp(36px,5vw,70px);
     color:#ff7a54;
     margin-bottom:15px;
-    text-align:center;
 }
 
 #finishScreen p{
     font-size:clamp(20px,3vw,36px);
-    color:#333;
     margin-bottom:25px;
-    text-align:center;
 }
 
 #playAgainBtn{
@@ -198,10 +183,6 @@ html,body{
     font-size:24px;
     font-weight:bold;
     cursor:pointer;
-}
-
-#playAgainBtn:active{
-    transform:scale(0.95);
 }
 
 /* ---------------- CONFETTI ---------------- */
@@ -216,11 +197,11 @@ html,body{
 
 @keyframes fall{
 
-    0%{
+    from{
         transform:translateY(-10vh) rotate(0deg);
     }
 
-    100%{
+    to{
         transform:translateY(120vh) rotate(720deg);
     }
 }
@@ -236,15 +217,6 @@ html,body{
     .questionBox{
         font-size:20px;
     }
-
-    .speakBtn{
-        width:48px;
-        height:48px;
-    }
-
-    #playAgainBtn{
-        font-size:22px;
-    }
 }
 
 </style>
@@ -252,7 +224,7 @@ html,body{
 
 <body>
 
-<!-- SPLASH SCREEN -->
+<!-- SPLASH -->
 
 <div id="splash">
 
@@ -376,7 +348,7 @@ html,body{
 
     </div>
 
-    <!-- FINISH SCREEN -->
+    <!-- FINISH -->
 
     <div id="finishScreen">
 
@@ -394,11 +366,17 @@ html,body{
 
 <!-- AUDIO -->
 
-<audio id="correctSound"
-src="assets/right.mp3"></audio>
+<audio id="rightSound"
+src="assets/right.mp3"
+preload="auto"></audio>
+
+<audio id="wrongSound"
+src="assets/wrong.mp3"
+preload="auto"></audio>
 
 <audio id="clapSound"
-src="assets/clapping.mp3"></audio>
+src="assets/clapping.mp3"
+preload="auto"></audio>
 
 <script>
 
@@ -415,17 +393,33 @@ const questions = [
     "Circle the girl who is down."
 ];
 
+/* ---------------- CORRECT AREAS ---------------- */
+/* THESE VALUES CONTROL RIGHT / WRONG ANSWERS */
+
+const correctAreas = [
+
+    {x:35,y:58,r:14}, /* ROUND 1 */
+
+    {x:67,y:28,r:14}, /* ROUND 2 */
+
+    {x:68,y:28,r:14}, /* ROUND 3 */
+
+    {x:35,y:58,r:14}  /* ROUND 4 */
+];
+
 let currentRound = 0;
 
-/* ---------------- SPLASH SCREEN ---------------- */
+/* ---------------- SPLASH ---------------- */
 
 window.onload = () => {
 
     setTimeout(()=>{
 
-        document.getElementById("splash").style.display="none";
+        document.getElementById("splash")
+        .style.display="none";
 
-        document.getElementById("game").style.display="block";
+        document.getElementById("game")
+        .style.display="block";
 
         setupCanvas();
 
@@ -450,7 +444,7 @@ function speakQuestion(index){
     speechSynthesis.speak(speech);
 }
 
-/* ---------------- CANVAS SETUP ---------------- */
+/* ---------------- CANVAS ---------------- */
 
 function setupCanvas(){
 
@@ -464,9 +458,7 @@ function setupCanvas(){
         const ctx =
         canvas.getContext("2d");
 
-        /* GREEN DRAWING LINE */
-
-        ctx.strokeStyle = "#00c853";
+        ctx.strokeStyle = "#00ff4c";
 
         ctx.lineWidth = 14;
 
@@ -476,7 +468,9 @@ function setupCanvas(){
 
         let drawing = false;
 
-        function getPosition(e){
+        let points = [];
+
+        function getPos(e){
 
             const rect =
             canvas.getBoundingClientRect();
@@ -507,19 +501,19 @@ function setupCanvas(){
             return {x,y};
         }
 
-        function startDraw(e){
+        function start(e){
 
             drawing = true;
 
-            const pos =
-            getPosition(e);
+            points = [];
+
+            const pos = getPos(e);
+
+            points.push(pos);
 
             ctx.beginPath();
 
-            ctx.moveTo(
-                pos.x,
-                pos.y
-            );
+            ctx.moveTo(pos.x,pos.y);
         }
 
         function draw(e){
@@ -528,31 +522,27 @@ function setupCanvas(){
 
             e.preventDefault();
 
-            const pos =
-            getPosition(e);
+            const pos = getPos(e);
 
-            ctx.lineTo(
-                pos.x,
-                pos.y
-            );
+            points.push(pos);
+
+            ctx.lineTo(pos.x,pos.y);
 
             ctx.stroke();
         }
 
-        function stopDraw(){
+        function stop(){
 
             if(!drawing) return;
 
             drawing = false;
 
-            completeRound(index);
+            checkAnswer(points,index);
         }
-
-        /* MOUSE EVENTS */
 
         canvas.addEventListener(
             "mousedown",
-            startDraw
+            start
         );
 
         canvas.addEventListener(
@@ -562,14 +552,12 @@ function setupCanvas(){
 
         canvas.addEventListener(
             "mouseup",
-            stopDraw
+            stop
         );
-
-        /* TOUCH EVENTS */
 
         canvas.addEventListener(
             "touchstart",
-            startDraw,
+            start,
             {passive:false}
         );
 
@@ -581,7 +569,7 @@ function setupCanvas(){
 
         canvas.addEventListener(
             "touchend",
-            stopDraw
+            stop
         );
     });
 
@@ -590,48 +578,89 @@ function setupCanvas(){
         ()=>{
 
             document
-            .querySelectorAll(
-                ".drawCanvas"
-            )
-            .forEach(
-                resizeCanvas
-            );
+            .querySelectorAll(".drawCanvas")
+            .forEach(resizeCanvas);
         }
     );
 }
 
-/* ---------------- RESIZE CANVAS ---------------- */
+/* ---------------- RESIZE ---------------- */
 
 function resizeCanvas(canvas){
 
-    const parent =
-    canvas.parentElement;
-
     canvas.width =
-    parent.offsetWidth;
+    canvas.offsetWidth;
 
     canvas.height =
-    parent.offsetHeight;
+    canvas.offsetHeight;
 }
 
-/* ---------------- COMPLETE ROUND ---------------- */
+/* ---------------- CHECK ANSWER ---------------- */
 
-function completeRound(index){
+function checkAnswer(points,index){
 
     if(index !== currentRound) return;
 
-    /* RIGHT SOUND */
+    const canvas =
+    document.querySelectorAll(
+        ".drawCanvas"
+    )[index];
 
-    const correct =
+    const area =
+    correctAreas[index];
+
+    const correctX =
+    (area.x/100) * canvas.width;
+
+    const correctY =
+    (area.y/100) * canvas.height;
+
+    const radius =
+    (area.r/100) * canvas.width;
+
+    let correct = false;
+
+    for(let p of points){
+
+        const dx =
+        p.x - correctX;
+
+        const dy =
+        p.y - correctY;
+
+        const distance =
+        Math.sqrt(dx*dx + dy*dy);
+
+        if(distance < radius){
+
+            correct = true;
+
+            break;
+        }
+    }
+
+    if(correct){
+
+        playCorrect();
+
+    }else{
+
+        playWrong();
+    }
+}
+
+/* ---------------- CORRECT ---------------- */
+
+function playCorrect(){
+
+    const right =
     document.getElementById(
-        "correctSound"
+        "rightSound"
     );
 
-    correct.currentTime = 0;
+    right.currentTime = 0;
 
-    correct.play();
-
-    /* CLAP SOUND */
+    right.play();
 
     setTimeout(()=>{
 
@@ -644,15 +673,27 @@ function completeRound(index){
 
         clap.play();
 
-    },500);
-
-    /* NEXT ROUND */
+    },700);
 
     setTimeout(()=>{
 
         nextRound();
 
     },2200);
+}
+
+/* ---------------- WRONG ---------------- */
+
+function playWrong(){
+
+    const wrong =
+    document.getElementById(
+        "wrongSound"
+    );
+
+    wrong.currentTime = 0;
+
+    wrong.play();
 }
 
 /* ---------------- NEXT ROUND ---------------- */
@@ -683,12 +724,10 @@ function nextRound(){
         "active"
     );
 
-    speakQuestion(
-        currentRound
-    );
+    speakQuestion(currentRound);
 }
 
-/* ---------------- FINISH GAME ---------------- */
+/* ---------------- FINISH ---------------- */
 
 function finishGame(){
 
@@ -719,6 +758,15 @@ function createConfetti(){
         "finishScreen"
     );
 
+    const colors = [
+
+        "#ff7a54",
+        "#ffd166",
+        "#7bd389",
+        "#6ec6ff",
+        "#c792ea"
+    ];
+
     for(let i=0;i<120;i++){
 
         const confetti =
@@ -734,35 +782,19 @@ function createConfetti(){
         Math.random()*100 + "vw";
 
         confetti.style.background =
-        randomColor();
+        colors[
+            Math.floor(
+                Math.random()*colors.length
+            )
+        ];
 
         confetti.style.animationDuration =
-        (Math.random()*3 + 3)
-        + "s";
+        (Math.random()*3+3)+"s";
 
         finish.appendChild(
             confetti
         );
     }
-}
-
-function randomColor(){
-
-    const colors = [
-
-        "#ff7a54",
-        "#ffd166",
-        "#7bd389",
-        "#6ec6ff",
-        "#c792ea"
-    ];
-
-    return colors[
-        Math.floor(
-            Math.random()
-            * colors.length
-        )
-    ];
 }
 
 /* ---------------- PLAY AGAIN ---------------- */
