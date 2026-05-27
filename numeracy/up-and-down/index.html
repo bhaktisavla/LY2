@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
 <meta name="viewport"
 content="width=device-width,
 initial-scale=1.0,
@@ -33,7 +34,9 @@ overflow:hidden;
 background:url('assets/garden.jpg') center center/cover no-repeat;
 }
 
-/* LOGO */
+/* =========================
+LOGO
+========================= */
 
 #logoScreen{
 position:absolute;
@@ -49,7 +52,9 @@ z-index:1000;
 width:min(60vw,320px);
 }
 
-/* GAME */
+/* =========================
+GAME
+========================= */
 
 #gameScreen{
 display:none;
@@ -58,7 +63,9 @@ height:100%;
 position:relative;
 }
 
-/* TOP BAR */
+/* =========================
+TOP BAR
+========================= */
 
 .topBar{
 position:absolute;
@@ -93,7 +100,9 @@ background:#ffd166;
 font-size:24px;
 }
 
-/* IMAGE */
+/* =========================
+IMAGE
+========================= */
 
 #slideImage{
 position:absolute;
@@ -105,7 +114,9 @@ max-height:75vh;
 object-fit:contain;
 }
 
-/* CANVAS */
+/* =========================
+CANVAS
+========================= */
 
 canvas{
 position:absolute;
@@ -113,7 +124,9 @@ inset:0;
 z-index:20;
 }
 
-/* MESSAGE */
+/* =========================
+MESSAGE
+========================= */
 
 #nextMessage{
 position:absolute;
@@ -129,7 +142,9 @@ display:none;
 z-index:200;
 }
 
-/* FINISH */
+/* =========================
+FINISH
+========================= */
 
 #finishScreen{
 position:absolute;
@@ -163,7 +178,9 @@ border-radius:20px;
 background:#ffb703;
 }
 
-/* CONFETTI */
+/* =========================
+CONFETTI
+========================= */
 
 .confetti{
 position:absolute;
@@ -189,7 +206,9 @@ transform:translateY(120vh) rotate(720deg);
 <!-- LOGO -->
 
 <div id="logoScreen">
+
 <img src="assets/innovine-logo.png">
+
 </div>
 
 <!-- GAME -->
@@ -242,6 +261,18 @@ Play Again
 ROUNDS
 ==================================== */
 
+/*
+IMPORTANT:
+
+I made the answer areas MUCH tighter
+for rounds 1 and 2.
+
+Now wrong child will NOT work.
+
+Child can still loosely scribble
+on correct child.
+*/
+
 const rounds = [
 
 {
@@ -250,8 +281,8 @@ question:'Circle the child who is down.',
 
 correct:{
 x:0.50,
-y:0.74,
-radius:0.20
+y:0.76,
+radius:0.14
 }
 },
 
@@ -261,8 +292,8 @@ question:'Circle the child who is up.',
 
 correct:{
 x:0.56,
-y:0.24,
-radius:0.20
+y:0.22,
+radius:0.14
 }
 },
 
@@ -272,8 +303,8 @@ question:'Circle the child who is up.',
 
 correct:{
 x:0.44,
-y:0.24,
-radius:0.20
+y:0.22,
+radius:0.14
 }
 },
 
@@ -283,8 +314,8 @@ question:'Circle the child who is down.',
 
 correct:{
 x:0.52,
-y:0.74,
-radius:0.20
+y:0.76,
+radius:0.14
 }
 }
 
@@ -564,7 +595,10 @@ relY - round.correct.y;
 const distance =
 Math.sqrt(dx*dx + dy*dy);
 
-/* ONLY COUNT IF INSIDE CORRECT AREA */
+/*
+ONLY COUNT POINTS
+VERY CLOSE TO CORRECT CHILD
+*/
 
 if(distance < round.correct.radius){
 
@@ -573,13 +607,18 @@ hitCount++;
 }
 
 /* ====================================
-FIX:
-Needs MANY points INSIDE correct child
+FINAL FIX
+
+Needs several points INSIDE
+correct child.
+
+Wrong child will fail.
 ==================================== */
 
-if(hitCount >= 8){
+if(hitCount >= 5){
 
 rightSound.currentTime = 0;
+
 rightSound.play();
 
 nextMessage.style.display='block';
@@ -604,6 +643,7 @@ loadRound();
 }else{
 
 wrongSound.currentTime = 0;
+
 wrongSound.play();
 
 setTimeout(()=>{
