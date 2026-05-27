@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Up and Down Game</title>
 
 <style>
+
 *{
     margin:0;
     padding:0;
@@ -17,15 +19,11 @@ html,body{
     width:100%;
     height:100%;
     overflow:hidden;
-    font-family: Arial, sans-serif;
-    background:#dff3ff;
+    font-family:Arial, sans-serif;
+    background:#dff4ff;
 }
 
-body{
-    position:relative;
-}
-
-/* ---------- SPLASH SCREEN ---------- */
+/* ---------------- SPLASH SCREEN ---------------- */
 
 #splash{
     position:fixed;
@@ -39,11 +37,10 @@ body{
 
 #splash img{
     width:min(320px,70vw);
-    max-height:60vh;
     object-fit:contain;
 }
 
-/* ---------- GAME ---------- */
+/* ---------------- GAME AREA ---------------- */
 
 #game{
     width:100%;
@@ -51,9 +48,9 @@ body{
     display:none;
     position:relative;
     overflow:hidden;
-    background-image:url('assets/garden.png');
-    background-size:cover;
-    background-position:center;
+
+    /* YOUR GARDEN BACKDROP */
+    background:url('assets/garden.png') center center / cover no-repeat;
 }
 
 /* Soft overlay */
@@ -61,19 +58,19 @@ body{
     content:'';
     position:absolute;
     inset:0;
-    background:rgba(255,255,255,0.18);
+    background:rgba(255,255,255,0.08);
     z-index:0;
 }
 
 .round{
+    position:absolute;
+    inset:0;
     width:100%;
     height:100%;
     display:none;
     flex-direction:column;
     justify-content:space-between;
     align-items:center;
-    position:absolute;
-    inset:0;
     padding:10px;
     z-index:2;
 }
@@ -82,6 +79,8 @@ body{
     display:flex;
 }
 
+/* ---------------- TOP BAR ---------------- */
+
 .topBar{
     width:100%;
     display:flex;
@@ -89,18 +88,19 @@ body{
     align-items:center;
     gap:10px;
     margin-top:5px;
+    z-index:5;
 }
 
 .questionBox{
-    background:#fff7d6;
+    background:#fff6c9;
     color:#5b3b00;
     padding:12px 18px;
-    border-radius:18px;
-    font-size:clamp(18px,2.7vw,32px);
+    border-radius:20px;
+    font-size:clamp(18px,2.6vw,30px);
     font-weight:bold;
     text-align:center;
-    box-shadow:0 4px 8px rgba(0,0,0,0.15);
-    max-width:85%;
+    box-shadow:0 4px 10px rgba(0,0,0,0.18);
+    max-width:82%;
 }
 
 .speakBtn{
@@ -108,15 +108,17 @@ body{
     height:52px;
     border:none;
     border-radius:50%;
-    background:#8ed1a5;
+    background:#8fd0a2;
     font-size:24px;
     cursor:pointer;
-    box-shadow:0 4px 8px rgba(0,0,0,0.15);
+    box-shadow:0 4px 10px rgba(0,0,0,0.18);
 }
 
 .speakBtn:active{
     transform:scale(0.96);
 }
+
+/* ---------------- IMAGE AREA ---------------- */
 
 .imageArea{
     position:relative;
@@ -131,22 +133,28 @@ body{
 .sceneImage{
     width:100%;
     max-width:1000px;
-    max-height:78vh;
+    max-height:76vh;
     object-fit:contain;
+    pointer-events:none;
     user-select:none;
     -webkit-user-drag:none;
-    pointer-events:none;
+    position:relative;
+    z-index:1;
 }
 
-/* Canvas for drawing */
+/* DRAWING CANVAS */
+
 .drawCanvas{
     position:absolute;
+    inset:0;
     width:100%;
     height:100%;
+    z-index:5;
     touch-action:none;
 }
 
-/* Finish screen */
+/* ---------------- FINISH SCREEN ---------------- */
+
 #finishScreen{
     position:absolute;
     inset:0;
@@ -154,23 +162,70 @@ body{
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    background:rgba(255,255,255,0.9);
-    z-index:10;
+    background:rgba(255,255,255,0.92);
+    z-index:100;
+    overflow:hidden;
 }
 
 #finishScreen h1{
-    font-size:clamp(34px,5vw,70px);
-    color:#ff7b54;
-    margin-bottom:20px;
+    font-size:clamp(36px,5vw,70px);
+    color:#ff7a54;
+    margin-bottom:15px;
+    text-align:center;
 }
 
 #finishScreen p{
-    font-size:clamp(22px,3vw,38px);
+    font-size:clamp(20px,3vw,36px);
     color:#333;
+    margin-bottom:30px;
+    text-align:center;
 }
 
-/* Responsive */
-@media (max-width:768px){
+#playAgainBtn{
+    padding:16px 30px;
+    border:none;
+    border-radius:18px;
+    background:#ffb347;
+    color:white;
+    font-size:24px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+#playAgainBtn:active{
+    transform:scale(0.96);
+}
+
+/* ---------------- CONFETTI ---------------- */
+
+.confetti{
+    position:absolute;
+    width:14px;
+    height:14px;
+    top:-20px;
+    opacity:0.9;
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+
+    0%{
+        transform:translateY(-10vh) rotate(0deg);
+    }
+
+    100%{
+        transform:translateY(120vh) rotate(720deg);
+    }
+}
+
+/* ---------------- MOBILE ---------------- */
+
+@media(max-width:768px){
+
+    .sceneImage{
+        max-height:70vh;
+    }
 
     .questionBox{
         font-size:20px;
@@ -183,8 +238,9 @@ body{
         font-size:22px;
     }
 
-    .sceneImage{
-        max-height:72vh;
+    #playAgainBtn{
+        font-size:22px;
+        padding:14px 26px;
     }
 }
 
@@ -203,110 +259,146 @@ body{
 
     <!-- ROUND 1 -->
     <div class="round active" id="round0">
+
         <div class="topBar">
             <div class="questionBox">
                 Circle the child who is down.
             </div>
 
-            <button class="speakBtn" onclick="speakQuestion(0)">🔊</button>
+            <button class="speakBtn" onclick="speakQuestion(0)">
+                🔊
+            </button>
         </div>
 
         <div class="imageArea">
-            <img src="assets/downboy.png" class="sceneImage" alt="Down Boy">
+            <img src="assets/downboy.png" class="sceneImage">
             <canvas class="drawCanvas"></canvas>
         </div>
+
     </div>
 
     <!-- ROUND 2 -->
     <div class="round" id="round1">
+
         <div class="topBar">
             <div class="questionBox">
                 Circle the girl who is up.
             </div>
 
-            <button class="speakBtn" onclick="speakQuestion(1)">🔊</button>
+            <button class="speakBtn" onclick="speakQuestion(1)">
+                🔊
+            </button>
         </div>
 
         <div class="imageArea">
-            <img src="assets/upgirl.png" class="sceneImage" alt="Up Girl">
+            <img src="assets/upgirl.png" class="sceneImage">
             <canvas class="drawCanvas"></canvas>
         </div>
+
     </div>
 
     <!-- ROUND 3 -->
     <div class="round" id="round2">
+
         <div class="topBar">
             <div class="questionBox">
                 Circle the boy who is up.
             </div>
 
-            <button class="speakBtn" onclick="speakQuestion(2)">🔊</button>
+            <button class="speakBtn" onclick="speakQuestion(2)">
+                🔊
+            </button>
         </div>
 
         <div class="imageArea">
-            <img src="assets/upboy.png" class="sceneImage" alt="Up Boy">
+            <img src="assets/upboy.png" class="sceneImage">
             <canvas class="drawCanvas"></canvas>
         </div>
+
     </div>
 
     <!-- ROUND 4 -->
     <div class="round" id="round3">
+
         <div class="topBar">
             <div class="questionBox">
                 Circle the girl who is down.
             </div>
 
-            <button class="speakBtn" onclick="speakQuestion(3)">🔊</button>
+            <button class="speakBtn" onclick="speakQuestion(3)">
+                🔊
+            </button>
         </div>
 
         <div class="imageArea">
-            <img src="assets/downgirl.png" class="sceneImage" alt="Down Girl">
+            <img src="assets/downgirl.png" class="sceneImage">
             <canvas class="drawCanvas"></canvas>
         </div>
+
     </div>
 
-    <!-- FINISH -->
+    <!-- FINISH SCREEN -->
     <div id="finishScreen">
-        <h1>Great Job! 🎉</h1>
-        <p>You completed all the rounds.</p>
+
+        <h1>Wonderful Work! 🎉</h1>
+
+        <p>You completed all 4 rounds.</p>
+
+        <button id="playAgainBtn">
+            Play Again
+        </button>
+
     </div>
 
 </div>
 
 <!-- AUDIO -->
+
 <audio id="correctSound" src="assets/right.mp3"></audio>
+
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
 <audio id="clapSound" src="assets/clapping.mp3"></audio>
 
 <script>
 
+/* ---------------- QUESTIONS ---------------- */
+
 const questions = [
+
     "Circle the child who is down.",
+
     "Circle the girl who is up.",
+
     "Circle the boy who is up.",
+
     "Circle the girl who is down."
 ];
 
 let currentRound = 0;
 
-/* ---------- SPLASH ---------- */
+/* ---------------- SPLASH ---------------- */
 
 window.onload = () => {
 
     setTimeout(() => {
 
         document.getElementById("splash").style.display = "none";
+
         document.getElementById("game").style.display = "block";
 
-        setupAllCanvas();
+        setupCanvas();
+
         speakQuestion(0);
 
-    }, 5000);
+    },5000);
 };
 
-/* ---------- VOICE ---------- */
+/* ---------------- SPEECH ---------------- */
 
 function speakQuestion(index){
+
+    window.speechSynthesis.cancel();
 
     const speech = new SpeechSynthesisUtterance(questions[index]);
 
@@ -314,13 +406,12 @@ function speakQuestion(index){
     speech.pitch = 1;
     speech.volume = 1;
 
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(speech);
+    speechSynthesis.speak(speech);
 }
 
-/* ---------- DRAWING ---------- */
+/* ---------------- CANVAS ---------------- */
 
-function setupAllCanvas(){
+function setupCanvas(){
 
     const canvases = document.querySelectorAll(".drawCanvas");
 
@@ -330,23 +421,27 @@ function setupAllCanvas(){
 
         const ctx = canvas.getContext("2d");
 
-        ctx.lineWidth = 8;
+        /* GREEN LINE */
+        ctx.strokeStyle = "#18b84f";
+        ctx.lineWidth = 10;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
-        ctx.strokeStyle = "#16b84e";
 
         let drawing = false;
 
-        function getPos(e){
+        function getPosition(e){
 
             const rect = canvas.getBoundingClientRect();
 
             let x,y;
 
             if(e.touches){
+
                 x = e.touches[0].clientX - rect.left;
                 y = e.touches[0].clientY - rect.top;
+
             }else{
+
                 x = e.clientX - rect.left;
                 y = e.clientY - rect.top;
             }
@@ -354,54 +449,65 @@ function setupAllCanvas(){
             return {x,y};
         }
 
-        function start(e){
+        function startDraw(e){
 
             drawing = true;
 
-            const pos = getPos(e);
+            const pos = getPosition(e);
 
             ctx.beginPath();
             ctx.moveTo(pos.x,pos.y);
         }
 
-        function move(e){
+        function draw(e){
 
             if(!drawing) return;
 
             e.preventDefault();
 
-            const pos = getPos(e);
+            const pos = getPosition(e);
 
             ctx.lineTo(pos.x,pos.y);
+
             ctx.stroke();
         }
 
-        function end(){
+        function stopDraw(){
 
             if(!drawing) return;
 
             drawing = false;
 
-            checkRoundComplete(index);
+            roundCompleted(index);
         }
 
-        /* Mouse */
-        canvas.addEventListener("mousedown", start);
-        canvas.addEventListener("mousemove", move);
-        canvas.addEventListener("mouseup", end);
-        canvas.addEventListener("mouseleave", end);
+        /* MOUSE */
 
-        /* Touch */
-        canvas.addEventListener("touchstart", start,{passive:false});
-        canvas.addEventListener("touchmove", move,{passive:false});
-        canvas.addEventListener("touchend", end);
+        canvas.addEventListener("mousedown",startDraw);
+
+        canvas.addEventListener("mousemove",draw);
+
+        canvas.addEventListener("mouseup",stopDraw);
+
+        canvas.addEventListener("mouseleave",stopDraw);
+
+        /* TOUCH */
+
+        canvas.addEventListener("touchstart",startDraw,{passive:false});
+
+        canvas.addEventListener("touchmove",draw,{passive:false});
+
+        canvas.addEventListener("touchend",stopDraw);
     });
 
-    window.addEventListener("resize", ()=>{
+    window.addEventListener("resize",()=>{
 
-        canvases.forEach(c=>resizeCanvas(c));
+        document.querySelectorAll(".drawCanvas").forEach(resizeCanvas);
+
     });
 }
+
+/* ---------------- RESIZE CANVAS ---------------- */
 
 function resizeCanvas(canvas){
 
@@ -409,28 +515,42 @@ function resizeCanvas(canvas){
     canvas.height = canvas.offsetHeight;
 }
 
-/* ---------- ROUND COMPLETE ---------- */
+/* ---------------- ROUND COMPLETED ---------------- */
 
-function checkRoundComplete(index){
+function roundCompleted(index){
 
     if(index !== currentRound) return;
 
-    document.getElementById("correctSound").play();
+    /* RIGHT SOUND */
+
+    const right = document.getElementById("correctSound");
+
+    right.currentTime = 0;
+
+    right.play();
+
+    /* CLAPPING SOUND */
 
     setTimeout(()=>{
 
-        document.getElementById("clapSound").play();
+        const clap = document.getElementById("clapSound");
 
-    },400);
+        clap.currentTime = 0;
+
+        clap.play();
+
+    },600);
+
+    /* NEXT ROUND */
 
     setTimeout(()=>{
 
         nextRound();
 
-    },1800);
+    },2200);
 }
 
-/* ---------- NEXT ROUND ---------- */
+/* ---------------- NEXT ROUND ---------------- */
 
 function nextRound(){
 
@@ -442,13 +562,7 @@ function nextRound(){
 
     if(currentRound >= rounds.length){
 
-        document.getElementById("finishScreen").style.display = "flex";
-
-        const finalSpeech = new SpeechSynthesisUtterance(
-            "Great job! You completed all the rounds."
-        );
-
-        speechSynthesis.speak(finalSpeech);
+        finishGame();
 
         return;
     }
@@ -457,6 +571,70 @@ function nextRound(){
 
     speakQuestion(currentRound);
 }
+
+/* ---------------- FINISH GAME ---------------- */
+
+function finishGame(){
+
+    document.getElementById("finishScreen").style.display = "flex";
+
+    createConfetti();
+
+    const speech = new SpeechSynthesisUtterance(
+        "Wonderful work. You completed all four rounds."
+    );
+
+    speech.rate = 0.9;
+
+    speechSynthesis.speak(speech);
+}
+
+/* ---------------- CONFETTI ---------------- */
+
+function createConfetti(){
+
+    const finish = document.getElementById("finishScreen");
+
+    for(let i=0;i<120;i++){
+
+        const confetti = document.createElement("div");
+
+        confetti.classList.add("confetti");
+
+        confetti.style.left = Math.random()*100 + "vw";
+
+        confetti.style.background = randomColor();
+
+        confetti.style.animationDuration =
+            (Math.random()*3 + 3) + "s";
+
+        finish.appendChild(confetti);
+    }
+}
+
+function randomColor(){
+
+    const colors = [
+
+        "#ff7a54",
+        "#ffd166",
+        "#7bd389",
+        "#6ec6ff",
+        "#c792ea"
+    ];
+
+    return colors[
+        Math.floor(Math.random()*colors.length)
+    ];
+}
+
+/* ---------------- PLAY AGAIN ---------------- */
+
+document.getElementById("playAgainBtn")
+.addEventListener("click",()=>{
+
+    location.reload();
+});
 
 </script>
 
