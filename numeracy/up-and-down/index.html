@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Up and Down Game</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family: Arial, sans-serif;
+    background:#dff3ff;
+}
+
+body{
+    position:relative;
+}
+
+/* ---------- SPLASH SCREEN ---------- */
+
+#splash{
+    position:fixed;
+    inset:0;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+#splash img{
+    width:min(320px,70vw);
+    max-height:60vh;
+    object-fit:contain;
+}
+
+/* ---------- GAME ---------- */
+
+#game{
+    width:100%;
+    height:100%;
+    display:none;
+    position:relative;
+    overflow:hidden;
+    background-image:url('assets/garden.png');
+    background-size:cover;
+    background-position:center;
+}
+
+/* Soft overlay */
+#game::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.18);
+    z-index:0;
+}
+
+.round{
+    width:100%;
+    height:100%;
+    display:none;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:center;
+    position:absolute;
+    inset:0;
+    padding:10px;
+    z-index:2;
+}
+
+.round.active{
+    display:flex;
+}
+
+.topBar{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin-top:5px;
+}
+
+.questionBox{
+    background:#fff7d6;
+    color:#5b3b00;
+    padding:12px 18px;
+    border-radius:18px;
+    font-size:clamp(18px,2.7vw,32px);
+    font-weight:bold;
+    text-align:center;
+    box-shadow:0 4px 8px rgba(0,0,0,0.15);
+    max-width:85%;
+}
+
+.speakBtn{
+    width:52px;
+    height:52px;
+    border:none;
+    border-radius:50%;
+    background:#8ed1a5;
+    font-size:24px;
+    cursor:pointer;
+    box-shadow:0 4px 8px rgba(0,0,0,0.15);
+}
+
+.speakBtn:active{
+    transform:scale(0.96);
+}
+
+.imageArea{
+    position:relative;
+    width:100%;
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+}
+
+.sceneImage{
+    width:100%;
+    max-width:1000px;
+    max-height:78vh;
+    object-fit:contain;
+    user-select:none;
+    -webkit-user-drag:none;
+    pointer-events:none;
+}
+
+/* Canvas for drawing */
+.drawCanvas{
+    position:absolute;
+    width:100%;
+    height:100%;
+    touch-action:none;
+}
+
+/* Finish screen */
+#finishScreen{
+    position:absolute;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    background:rgba(255,255,255,0.9);
+    z-index:10;
+}
+
+#finishScreen h1{
+    font-size:clamp(34px,5vw,70px);
+    color:#ff7b54;
+    margin-bottom:20px;
+}
+
+#finishScreen p{
+    font-size:clamp(22px,3vw,38px);
+    color:#333;
+}
+
+/* Responsive */
+@media (max-width:768px){
+
+    .questionBox{
+        font-size:20px;
+        padding:10px 14px;
+    }
+
+    .speakBtn{
+        width:48px;
+        height:48px;
+        font-size:22px;
+    }
+
+    .sceneImage{
+        max-height:72vh;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+    <!-- ROUND 1 -->
+    <div class="round active" id="round0">
+        <div class="topBar">
+            <div class="questionBox">
+                Circle the child who is down.
+            </div>
+
+            <button class="speakBtn" onclick="speakQuestion(0)">🔊</button>
+        </div>
+
+        <div class="imageArea">
+            <img src="assets/downboy.png" class="sceneImage" alt="Down Boy">
+            <canvas class="drawCanvas"></canvas>
+        </div>
+    </div>
+
+    <!-- ROUND 2 -->
+    <div class="round" id="round1">
+        <div class="topBar">
+            <div class="questionBox">
+                Circle the girl who is up.
+            </div>
+
+            <button class="speakBtn" onclick="speakQuestion(1)">🔊</button>
+        </div>
+
+        <div class="imageArea">
+            <img src="assets/upgirl.png" class="sceneImage" alt="Up Girl">
+            <canvas class="drawCanvas"></canvas>
+        </div>
+    </div>
+
+    <!-- ROUND 3 -->
+    <div class="round" id="round2">
+        <div class="topBar">
+            <div class="questionBox">
+                Circle the boy who is up.
+            </div>
+
+            <button class="speakBtn" onclick="speakQuestion(2)">🔊</button>
+        </div>
+
+        <div class="imageArea">
+            <img src="assets/upboy.png" class="sceneImage" alt="Up Boy">
+            <canvas class="drawCanvas"></canvas>
+        </div>
+    </div>
+
+    <!-- ROUND 4 -->
+    <div class="round" id="round3">
+        <div class="topBar">
+            <div class="questionBox">
+                Circle the girl who is down.
+            </div>
+
+            <button class="speakBtn" onclick="speakQuestion(3)">🔊</button>
+        </div>
+
+        <div class="imageArea">
+            <img src="assets/downgirl.png" class="sceneImage" alt="Down Girl">
+            <canvas class="drawCanvas"></canvas>
+        </div>
+    </div>
+
+    <!-- FINISH -->
+    <div id="finishScreen">
+        <h1>Great Job! 🎉</h1>
+        <p>You completed all the rounds.</p>
+    </div>
+
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/right.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/clapping.mp3"></audio>
+
+<script>
+
+const questions = [
+    "Circle the child who is down.",
+    "Circle the girl who is up.",
+    "Circle the boy who is up.",
+    "Circle the girl who is down."
+];
+
+let currentRound = 0;
+
+/* ---------- SPLASH ---------- */
+
+window.onload = () => {
+
+    setTimeout(() => {
+
+        document.getElementById("splash").style.display = "none";
+        document.getElementById("game").style.display = "block";
+
+        setupAllCanvas();
+        speakQuestion(0);
+
+    }, 5000);
+};
+
+/* ---------- VOICE ---------- */
+
+function speakQuestion(index){
+
+    const speech = new SpeechSynthesisUtterance(questions[index]);
+
+    speech.rate = 0.9;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(speech);
+}
+
+/* ---------- DRAWING ---------- */
+
+function setupAllCanvas(){
+
+    const canvases = document.querySelectorAll(".drawCanvas");
+
+    canvases.forEach((canvas,index)=>{
+
+        resizeCanvas(canvas);
+
+        const ctx = canvas.getContext("2d");
+
+        ctx.lineWidth = 8;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = "#16b84e";
+
+        let drawing = false;
+
+        function getPos(e){
+
+            const rect = canvas.getBoundingClientRect();
+
+            let x,y;
+
+            if(e.touches){
+                x = e.touches[0].clientX - rect.left;
+                y = e.touches[0].clientY - rect.top;
+            }else{
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
+            }
+
+            return {x,y};
+        }
+
+        function start(e){
+
+            drawing = true;
+
+            const pos = getPos(e);
+
+            ctx.beginPath();
+            ctx.moveTo(pos.x,pos.y);
+        }
+
+        function move(e){
+
+            if(!drawing) return;
+
+            e.preventDefault();
+
+            const pos = getPos(e);
+
+            ctx.lineTo(pos.x,pos.y);
+            ctx.stroke();
+        }
+
+        function end(){
+
+            if(!drawing) return;
+
+            drawing = false;
+
+            checkRoundComplete(index);
+        }
+
+        /* Mouse */
+        canvas.addEventListener("mousedown", start);
+        canvas.addEventListener("mousemove", move);
+        canvas.addEventListener("mouseup", end);
+        canvas.addEventListener("mouseleave", end);
+
+        /* Touch */
+        canvas.addEventListener("touchstart", start,{passive:false});
+        canvas.addEventListener("touchmove", move,{passive:false});
+        canvas.addEventListener("touchend", end);
+    });
+
+    window.addEventListener("resize", ()=>{
+
+        canvases.forEach(c=>resizeCanvas(c));
+    });
+}
+
+function resizeCanvas(canvas){
+
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+}
+
+/* ---------- ROUND COMPLETE ---------- */
+
+function checkRoundComplete(index){
+
+    if(index !== currentRound) return;
+
+    document.getElementById("correctSound").play();
+
+    setTimeout(()=>{
+
+        document.getElementById("clapSound").play();
+
+    },400);
+
+    setTimeout(()=>{
+
+        nextRound();
+
+    },1800);
+}
+
+/* ---------- NEXT ROUND ---------- */
+
+function nextRound(){
+
+    const rounds = document.querySelectorAll(".round");
+
+    rounds[currentRound].classList.remove("active");
+
+    currentRound++;
+
+    if(currentRound >= rounds.length){
+
+        document.getElementById("finishScreen").style.display = "flex";
+
+        const finalSpeech = new SpeechSynthesisUtterance(
+            "Great job! You completed all the rounds."
+        );
+
+        speechSynthesis.speak(finalSpeech);
+
+        return;
+    }
+
+    rounds[currentRound].classList.add("active");
+
+    speakQuestion(currentRound);
+}
+
+</script>
+
+</body>
+</html>
