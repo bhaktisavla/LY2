@@ -23,7 +23,7 @@ html,body{
     font-family:Arial,sans-serif;
 }
 
-/* ---------------- SPLASH ---------------- */
+/* ---------------- SPLASH SCREEN ---------------- */
 
 #splash{
     position:fixed;
@@ -39,7 +39,7 @@ html,body{
     width:min(320px,70vw);
 }
 
-/* ---------------- GAME ---------------- */
+/* ---------------- GAME AREA ---------------- */
 
 #game{
     width:100%;
@@ -49,19 +49,19 @@ html,body{
     overflow:hidden;
 
     /* GARDEN BACKGROUND */
-    background-image:url("assets/garden.png");
+    background-image:url("assets/garden.jpg");
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
 }
 
-/* Light overlay */
+/* Soft Overlay */
 
 #game::before{
     content:"";
     position:absolute;
     inset:0;
-    background:rgba(255,255,255,0.05);
+    background:rgba(255,255,255,0.08);
     z-index:0;
 }
 
@@ -91,18 +91,18 @@ html,body{
     align-items:center;
     gap:10px;
     margin-top:5px;
-    z-index:5;
+    z-index:10;
 }
 
 .questionBox{
     background:#fff7c8;
-    color:#5d3b00;
+    color:#5b3b00;
     padding:12px 18px;
     border-radius:18px;
-    font-size:clamp(18px,2.6vw,30px);
+    font-size:clamp(18px,2.5vw,30px);
     font-weight:bold;
     text-align:center;
-    box-shadow:0 4px 10px rgba(0,0,0,0.18);
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
     max-width:82%;
 }
 
@@ -111,7 +111,7 @@ html,body{
     height:52px;
     border:none;
     border-radius:50%;
-    background:#95d5a5;
+    background:#93d7a7;
     font-size:24px;
     cursor:pointer;
 }
@@ -132,26 +132,31 @@ html,body{
     overflow:hidden;
 }
 
-/* IMPORTANT FIX */
+/* GAME IMAGE */
 
 .sceneImage{
     width:100%;
     max-width:1000px;
     max-height:76vh;
     object-fit:contain;
-    position:relative;
+
+    position:absolute;
     z-index:1;
+
     pointer-events:none;
 }
 
-/* CANVAS FIXED */
+/* DRAWING CANVAS */
 
 .drawCanvas{
     position:absolute;
-    inset:0;
+    top:0;
+    left:0;
     width:100%;
     height:100%;
-    z-index:999;
+
+    z-index:9999;
+
     touch-action:none;
     pointer-events:auto;
 }
@@ -165,21 +170,23 @@ html,body{
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    background:rgba(255,255,255,0.9);
-    z-index:9999;
+    background:rgba(255,255,255,0.92);
+    z-index:99999;
     overflow:hidden;
 }
 
 #finishScreen h1{
-    font-size:clamp(38px,5vw,70px);
+    font-size:clamp(36px,5vw,70px);
     color:#ff7a54;
     margin-bottom:15px;
+    text-align:center;
 }
 
 #finishScreen p{
-    font-size:clamp(22px,3vw,36px);
+    font-size:clamp(20px,3vw,36px);
     color:#333;
     margin-bottom:25px;
+    text-align:center;
 }
 
 #playAgainBtn{
@@ -245,7 +252,7 @@ html,body{
 
 <body>
 
-<!-- SPLASH -->
+<!-- SPLASH SCREEN -->
 
 <div id="splash">
 
@@ -410,7 +417,7 @@ const questions = [
 
 let currentRound = 0;
 
-/* ---------------- SPLASH ---------------- */
+/* ---------------- SPLASH SCREEN ---------------- */
 
 window.onload = () => {
 
@@ -420,7 +427,7 @@ window.onload = () => {
 
         document.getElementById("game").style.display="block";
 
-        initializeCanvas();
+        setupCanvas();
 
         speakQuestion(0);
 
@@ -438,14 +445,14 @@ function speakQuestion(index){
         questions[index]
     );
 
-    speech.rate=0.9;
+    speech.rate = 0.9;
 
     speechSynthesis.speak(speech);
 }
 
-/* ---------------- CANVAS ---------------- */
+/* ---------------- CANVAS SETUP ---------------- */
 
-function initializeCanvas(){
+function setupCanvas(){
 
     const canvases =
     document.querySelectorAll(".drawCanvas");
@@ -457,17 +464,17 @@ function initializeCanvas(){
         const ctx =
         canvas.getContext("2d");
 
-        /* GREEN LINE */
+        /* GREEN DRAWING LINE */
 
-        ctx.strokeStyle="#00c853";
+        ctx.strokeStyle = "#00c853";
 
-        ctx.lineWidth=10;
+        ctx.lineWidth = 14;
 
-        ctx.lineCap="round";
+        ctx.lineCap = "round";
 
-        ctx.lineJoin="round";
+        ctx.lineJoin = "round";
 
-        let drawing=false;
+        let drawing = false;
 
         function getPosition(e){
 
@@ -478,29 +485,41 @@ function initializeCanvas(){
 
             if(e.touches){
 
-                x=e.touches[0].clientX-rect.left;
+                x =
+                e.touches[0].clientX
+                - rect.left;
 
-                y=e.touches[0].clientY-rect.top;
+                y =
+                e.touches[0].clientY
+                - rect.top;
 
             }else{
 
-                x=e.clientX-rect.left;
+                x =
+                e.clientX
+                - rect.left;
 
-                y=e.clientY-rect.top;
+                y =
+                e.clientY
+                - rect.top;
             }
 
             return {x,y};
         }
 
-        function start(e){
+        function startDraw(e){
 
-            drawing=true;
+            drawing = true;
 
-            const pos=getPosition(e);
+            const pos =
+            getPosition(e);
 
             ctx.beginPath();
 
-            ctx.moveTo(pos.x,pos.y);
+            ctx.moveTo(
+                pos.x,
+                pos.y
+            );
         }
 
         function draw(e){
@@ -509,41 +528,48 @@ function initializeCanvas(){
 
             e.preventDefault();
 
-            const pos=getPosition(e);
+            const pos =
+            getPosition(e);
 
-            ctx.lineTo(pos.x,pos.y);
+            ctx.lineTo(
+                pos.x,
+                pos.y
+            );
 
             ctx.stroke();
         }
 
-        function stop(){
+        function stopDraw(){
 
             if(!drawing) return;
 
-            drawing=false;
+            drawing = false;
 
             completeRound(index);
         }
 
-        /* MOUSE */
+        /* MOUSE EVENTS */
 
         canvas.addEventListener(
-            "mousedown",start
+            "mousedown",
+            startDraw
         );
 
         canvas.addEventListener(
-            "mousemove",draw
+            "mousemove",
+            draw
         );
 
         canvas.addEventListener(
-            "mouseup",stop
+            "mouseup",
+            stopDraw
         );
 
-        /* TOUCH */
+        /* TOUCH EVENTS */
 
         canvas.addEventListener(
             "touchstart",
-            start,
+            startDraw,
             {passive:false}
         );
 
@@ -555,7 +581,7 @@ function initializeCanvas(){
 
         canvas.addEventListener(
             "touchend",
-            stop
+            stopDraw
         );
     });
 
@@ -564,28 +590,35 @@ function initializeCanvas(){
         ()=>{
 
             document
-            .querySelectorAll(".drawCanvas")
-            .forEach(resizeCanvas);
+            .querySelectorAll(
+                ".drawCanvas"
+            )
+            .forEach(
+                resizeCanvas
+            );
         }
     );
 }
 
-/* ---------------- RESIZE ---------------- */
+/* ---------------- RESIZE CANVAS ---------------- */
 
 function resizeCanvas(canvas){
 
-    canvas.width=
-    canvas.offsetWidth;
+    const parent =
+    canvas.parentElement;
 
-    canvas.height=
-    canvas.offsetHeight;
+    canvas.width =
+    parent.offsetWidth;
+
+    canvas.height =
+    parent.offsetHeight;
 }
 
 /* ---------------- COMPLETE ROUND ---------------- */
 
 function completeRound(index){
 
-    if(index!==currentRound) return;
+    if(index !== currentRound) return;
 
     /* RIGHT SOUND */
 
@@ -594,11 +627,11 @@ function completeRound(index){
         "correctSound"
     );
 
-    correct.currentTime=0;
+    correct.currentTime = 0;
 
     correct.play();
 
-    /* CLAPPING SOUND */
+    /* CLAP SOUND */
 
     setTimeout(()=>{
 
@@ -607,7 +640,7 @@ function completeRound(index){
             "clapSound"
         );
 
-        clap.currentTime=0;
+        clap.currentTime = 0;
 
         clap.play();
 
@@ -627,14 +660,18 @@ function completeRound(index){
 function nextRound(){
 
     const rounds =
-    document.querySelectorAll(".round");
+    document.querySelectorAll(
+        ".round"
+    );
 
     rounds[currentRound]
-    .classList.remove("active");
+    .classList.remove(
+        "active"
+    );
 
     currentRound++;
 
-    if(currentRound>=rounds.length){
+    if(currentRound >= rounds.length){
 
         finishGame();
 
@@ -642,12 +679,16 @@ function nextRound(){
     }
 
     rounds[currentRound]
-    .classList.add("active");
+    .classList.add(
+        "active"
+    );
 
-    speakQuestion(currentRound);
+    speakQuestion(
+        currentRound
+    );
 }
 
-/* ---------------- FINISH ---------------- */
+/* ---------------- FINISH GAME ---------------- */
 
 function finishGame(){
 
@@ -662,9 +703,11 @@ function finishGame(){
         "Wonderful work. You completed all four rounds."
     );
 
-    speech.rate=0.9;
+    speech.rate = 0.9;
 
-    speechSynthesis.speak(speech);
+    speechSynthesis.speak(
+        speech
+    );
 }
 
 /* ---------------- CONFETTI ---------------- */
@@ -679,28 +722,33 @@ function createConfetti(){
     for(let i=0;i<120;i++){
 
         const confetti =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
         confetti.classList.add(
             "confetti"
         );
 
-        confetti.style.left=
-        Math.random()*100+"vw";
+        confetti.style.left =
+        Math.random()*100 + "vw";
 
-        confetti.style.background=
+        confetti.style.background =
         randomColor();
 
-        confetti.style.animationDuration=
-        (Math.random()*3+3)+"s";
+        confetti.style.animationDuration =
+        (Math.random()*3 + 3)
+        + "s";
 
-        finish.appendChild(confetti);
+        finish.appendChild(
+            confetti
+        );
     }
 }
 
 function randomColor(){
 
-    const colors=[
+    const colors = [
 
         "#ff7a54",
         "#ffd166",
@@ -711,7 +759,8 @@ function randomColor(){
 
     return colors[
         Math.floor(
-            Math.random()*colors.length
+            Math.random()
+            * colors.length
         )
     ];
 }
