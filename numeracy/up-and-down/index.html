@@ -64,7 +64,7 @@ body{
 }
 
 /* ======================
-   QUESTION AREA
+   QUESTION BAR
 ====================== */
 
 .topBar{
@@ -81,7 +81,7 @@ body{
 }
 
 #questionBox{
-    background:rgba(255,255,255,0.94);
+    background:rgba(255,255,255,0.93);
     padding:12px 18px;
     border-radius:18px;
     font-size:clamp(18px,2.5vw,32px);
@@ -128,7 +128,7 @@ canvas{
 }
 
 /* ======================
-   MESSAGE
+   SUCCESS MESSAGE
 ====================== */
 
 #nextMessage{
@@ -175,10 +175,6 @@ canvas{
     z-index:10;
 }
 
-/* ======================
-   PLAY AGAIN BUTTON
-====================== */
-
 #playAgainBtn{
     padding:16px 30px;
     font-size:24px;
@@ -219,13 +215,13 @@ canvas{
 
 <div id="gameContainer">
 
-    <!-- LOGO -->
+    <!-- LOGO SCREEN -->
 
     <div id="logoScreen">
         <img src="assets/innovine-logo.png" alt="Logo">
     </div>
 
-    <!-- GAME -->
+    <!-- GAME SCREEN -->
 
     <div id="gameScreen">
 
@@ -245,7 +241,7 @@ canvas{
 
     </div>
 
-    <!-- FINISH -->
+    <!-- FINISH SCREEN -->
 
     <div id="finishScreen">
 
@@ -269,11 +265,11 @@ canvas{
 
 <script>
 
-/* ===================================
+/* ======================================
    IMPORTANT:
-   THIS VERSION FIXES WRONG ANSWERS
-   BEING ACCEPTED.
-=================================== */
+   THESE VALUES PREVENT WRONG ANSWERS
+   FROM BEING ACCEPTED
+====================================== */
 
 const rounds = [
 
@@ -281,53 +277,51 @@ const rounds = [
     image:'assets/downboy.png',
     question:'Circle the child who is down.',
 
-    /* ONLY THIS AREA ACCEPTED */
-
     correctArea:{
         x:0.50,
-        y:0.73,
-        r:0.11
+        y:0.72,
+        r:0.12
     }
 },
 
 {
     image:'assets/upgirl.png',
-    question:'Circle the girl who is up.',
+    question:'Circle the child who is up.',
 
     correctArea:{
-        x:0.56,
+        x:0.55,
         y:0.28,
-        r:0.11
+        r:0.12
     }
 },
 
 {
     image:'assets/upboy.png',
-    question:'Circle the boy who is up.',
+    question:'Circle the child who is up.',
 
     correctArea:{
-        x:0.44,
+        x:0.45,
         y:0.28,
-        r:0.11
+        r:0.12
     }
 },
 
 {
     image:'assets/downgirl.png',
-    question:'Circle the girl who is down.',
+    question:'Circle the child who is down.',
 
     correctArea:{
-        x:0.56,
-        y:0.73,
-        r:0.11
+        x:0.52,
+        y:0.72,
+        r:0.12
     }
 }
 
 ];
 
-/* ===================================
+/* =========================
    VARIABLES
-=================================== */
+========================= */
 
 let currentRound = 0;
 
@@ -370,9 +364,9 @@ let drawing = false;
 
 let points = [];
 
-/* ===================================
-   RESIZE
-=================================== */
+/* =========================
+   RESIZE CANVAS
+========================= */
 
 function resizeCanvas(){
 
@@ -388,9 +382,9 @@ window.addEventListener(
     resizeCanvas
 );
 
-/* ===================================
+/* =========================
    START GAME
-=================================== */
+========================= */
 
 setTimeout(()=>{
 
@@ -402,9 +396,9 @@ setTimeout(()=>{
 
 },5000);
 
-/* ===================================
+/* =========================
    LOAD ROUND
-=================================== */
+========================= */
 
 function loadRound(){
 
@@ -419,9 +413,9 @@ function loadRound(){
     speakQuestion(round.question);
 }
 
-/* ===================================
-   SPEAK
-=================================== */
+/* =========================
+   VOICE
+========================= */
 
 function speakQuestion(text){
 
@@ -450,9 +444,9 @@ speakBtn.addEventListener('click',()=>{
 
 });
 
-/* ===================================
-   CLEAR CANVAS
-=================================== */
+/* =========================
+   DRAWING
+========================= */
 
 function clearCanvas(){
 
@@ -465,10 +459,6 @@ function clearCanvas(){
 
     points = [];
 }
-
-/* ===================================
-   GET POSITION
-=================================== */
 
 function getPos(e){
 
@@ -486,17 +476,13 @@ function getPos(e){
     };
 }
 
-/* ===================================
-   START DRAW
-=================================== */
-
 function startDraw(e){
 
     drawing = true;
 
-    const pos = getPos(e);
-
     points = [];
+
+    const pos = getPos(e);
 
     points.push(pos);
 
@@ -504,10 +490,6 @@ function startDraw(e){
 
     ctx.moveTo(pos.x,pos.y);
 }
-
-/* ===================================
-   DRAW
-=================================== */
 
 function draw(e){
 
@@ -528,10 +510,6 @@ function draw(e){
     ctx.stroke();
 }
 
-/* ===================================
-   END DRAW
-=================================== */
-
 function endDraw(){
 
     if(!drawing) return;
@@ -541,9 +519,9 @@ function endDraw(){
     checkAnswer();
 }
 
-/* ===================================
+/* =========================
    EVENTS
-=================================== */
+========================= */
 
 canvas.addEventListener(
     'mousedown',
@@ -577,9 +555,9 @@ canvas.addEventListener(
     endDraw
 );
 
-/* ===================================
+/* =========================
    CHECK ANSWER
-=================================== */
+========================= */
 
 function checkAnswer(){
 
@@ -588,12 +566,13 @@ function checkAnswer(){
     const imgRect =
     slideImage.getBoundingClientRect();
 
-    let insideCorrect = 0;
+    let correctHits = 0;
 
-    let totalPoints = points.length;
-
-    /* CHECK HOW MANY DRAW POINTS
-       ARE INSIDE CORRECT CHILD */
+    /* 
+       CHECK EVERY DRAW POINT
+       ONLY ACCEPT IF MANY POINTS
+       TOUCH THE CORRECT CHILD
+    */
 
     for(let p of points){
 
@@ -616,20 +595,16 @@ function checkAnswer(){
 
         if(distance < round.correctArea.r){
 
-            insideCorrect++;
+            correctHits++;
         }
     }
 
-    /* ===================================
-       VERY STRICT CHECK:
-       MOST OF DRAWING MUST BE
-       INSIDE CORRECT CHILD
-    =================================== */
+    /* 
+       VERY STRICT CHECK
+       WRONG CHILD WILL NOT WORK
+    */
 
-    const percentInside =
-    insideCorrect / totalPoints;
-
-    if(percentInside > 0.60){
+    if(correctHits >= 15){
 
         rightSound.currentTime = 0;
 
@@ -668,9 +643,9 @@ function checkAnswer(){
     }
 }
 
-/* ===================================
+/* =========================
    FINISH SCREEN
-=================================== */
+========================= */
 
 function showFinishScreen(){
 
@@ -681,9 +656,9 @@ function showFinishScreen(){
     createConfetti();
 }
 
-/* ===================================
+/* =========================
    CONFETTI
-=================================== */
+========================= */
 
 function createConfetti(){
 
@@ -720,9 +695,9 @@ function createConfetti(){
     }
 }
 
-/* ===================================
+/* =========================
    PLAY AGAIN
-=================================== */
+========================= */
 
 playAgainBtn.addEventListener('click',()=>{
 
