@@ -278,25 +278,73 @@ const rounds = [
 {
     image:'assets/downboy.png',
     question:'Circle the child who is down.',
-    correctArea:{x:0.50,y:0.70,r:0.30}
+
+    /* CORRECT CHILD AREA */
+
+    correctArea:{
+        x:0.50,
+        y:0.72,
+        r:0.16
+    },
+
+    /* WRONG CHILD AREA */
+
+    wrongArea:{
+        x:0.50,
+        y:0.28,
+        r:0.16
+    }
 },
 
 {
     image:'assets/upgirl.png',
     question:'Circle the girl who is up.',
-    correctArea:{x:0.55,y:0.28,r:0.30}
+
+    correctArea:{
+        x:0.55,
+        y:0.28,
+        r:0.16
+    },
+
+    wrongArea:{
+        x:0.45,
+        y:0.72,
+        r:0.16
+    }
 },
 
 {
     image:'assets/upboy.png',
     question:'Circle the boy who is up.',
-    correctArea:{x:0.45,y:0.28,r:0.30}
+
+    correctArea:{
+        x:0.45,
+        y:0.28,
+        r:0.16
+    },
+
+    wrongArea:{
+        x:0.55,
+        y:0.72,
+        r:0.16
+    }
 },
 
 {
     image:'assets/downgirl.png',
     question:'Circle the girl who is down.',
-    correctArea:{x:0.52,y:0.72,r:0.30}
+
+    correctArea:{
+        x:0.52,
+        y:0.72,
+        r:0.16
+    },
+
+    wrongArea:{
+        x:0.48,
+        y:0.28,
+        r:0.16
+    }
 }
 
 ];
@@ -546,7 +594,9 @@ function checkAnswer(){
     const imgRect =
     slideImage.getBoundingClientRect();
 
-    let hitCount = 0;
+    let correctHits = 0;
+
+    let wrongHits = 0;
 
     for(let p of points){
 
@@ -558,24 +608,52 @@ function checkAnswer(){
         (p.y - imgRect.top) /
         imgRect.height;
 
-        const dx =
+        /* CHECK CORRECT AREA */
+
+        const correctDx =
         relX - round.correctArea.x;
 
-        const dy =
+        const correctDy =
         relY - round.correctArea.y;
 
-        const distance =
-        Math.sqrt(dx*dx + dy*dy);
+        const correctDistance =
+        Math.sqrt(
+            correctDx*correctDx +
+            correctDy*correctDy
+        );
 
-        if(distance < round.correctArea.r){
+        if(correctDistance < round.correctArea.r){
 
-            hitCount++;
+            correctHits++;
+        }
+
+        /* CHECK WRONG AREA */
+
+        const wrongDx =
+        relX - round.wrongArea.x;
+
+        const wrongDy =
+        relY - round.wrongArea.y;
+
+        const wrongDistance =
+        Math.sqrt(
+            wrongDx*wrongDx +
+            wrongDy*wrongDy
+        );
+
+        if(wrongDistance < round.wrongArea.r){
+
+            wrongHits++;
         }
     }
 
-    /* CHILD CAN DRAW ANY SHAPE */
+    /* ======================
+       ACCEPT ONLY IF:
+       - MANY POINTS TOUCH CORRECT
+       - VERY FEW TOUCH WRONG
+    ====================== */
 
-    if(hitCount > 5){
+    if(correctHits > 8 && wrongHits < 4){
 
         rightSound.currentTime = 0;
 
@@ -672,14 +750,10 @@ function createConfetti(){
 
 playAgainBtn.addEventListener('click',()=>{
 
-    /* REMOVE CONFETTI */
-
     const allConfetti =
     document.querySelectorAll('.confetti');
 
     allConfetti.forEach(c=>c.remove());
-
-    /* RESET GAME */
 
     currentRound = 0;
 
