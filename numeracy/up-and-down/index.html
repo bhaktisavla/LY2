@@ -3,151 +3,197 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 <title>Up and Down Game</title>
 
 <style>
-    *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-        touch-action:none;
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    touch-action:none;
+}
+
+body{
+    overflow:hidden;
+    font-family:Arial, sans-serif;
+    background:#dff5ff;
+}
+
+/* MAIN GAME CONTAINER */
+
+#gameContainer{
+    width:100vw;
+    height:100vh;
+    position:relative;
+    overflow:hidden;
+    background:url('assets/garden.jpg') center center/cover no-repeat;
+}
+
+/* LOGO SCREEN */
+
+#logoScreen{
+    position:absolute;
+    inset:0;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+}
+
+#logoScreen img{
+    width:min(60vw,320px);
+    animation:fadeIn 2s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+/* GAME SCREEN */
+
+#gameScreen{
+    display:none;
+    width:100%;
+    height:100%;
+    position:relative;
+}
+
+/* QUESTION AREA */
+
+.topBar{
+    width:100%;
+    padding:10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:20;
+}
+
+#questionBox{
+    background:rgba(255,255,255,0.92);
+    padding:12px 18px;
+    border-radius:18px;
+    font-size:clamp(18px,2.5vw,32px);
+    font-weight:bold;
+    color:#333;
+    text-align:center;
+    max-width:80%;
+    box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+
+#speakBtn{
+    width:55px;
+    height:55px;
+    border:none;
+    border-radius:50%;
+    background:#ffd166;
+    font-size:24px;
+    cursor:pointer;
+    box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ROUND IMAGE */
+
+#slideImage{
+    position:absolute;
+    left:50%;
+    top:54%;
+    transform:translate(-50%,-50%);
+    max-width:92vw;
+    max-height:78vh;
+    object-fit:contain;
+    border-radius:20px;
+}
+
+/* DRAW CANVAS */
+
+canvas{
+    position:absolute;
+    inset:0;
+    z-index:10;
+}
+
+/* SUCCESS MESSAGE */
+
+#nextMessage{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#7bc96f;
+    color:white;
+    padding:12px 20px;
+    border-radius:16px;
+    font-size:24px;
+    display:none;
+    z-index:50;
+}
+
+/* FINISH SCREEN */
+
+#finishScreen{
+    display:none;
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.94);
+    z-index:200;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    overflow:hidden;
+}
+
+#finishScreen h1{
+    font-size:clamp(34px,5vw,60px);
+    color:#ff6b6b;
+    margin-bottom:20px;
+}
+
+#finishScreen p{
+    font-size:clamp(22px,3vw,34px);
+    color:#333;
+    margin-bottom:30px;
+}
+
+/* PLAY AGAIN BUTTON */
+
+#playAgainBtn{
+    padding:16px 28px;
+    border:none;
+    border-radius:18px;
+    background:#ffb703;
+    color:#333;
+    font-size:24px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 6px 10px rgba(0,0,0,0.2);
+}
+
+/* CONFETTI */
+
+.confetti{
+    position:absolute;
+    width:12px;
+    height:12px;
+    opacity:0.9;
+    top:-20px;
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(720deg);
     }
-
-    body{
-        overflow:hidden;
-        font-family:Arial, sans-serif;
-        background:#dff5ff;
-    }
-
-    #gameContainer{
-        width:100vw;
-        height:100vh;
-        position:relative;
-        overflow:hidden;
-        background:url('assets/garden.jpg') center center/cover no-repeat;
-    }
-
-    /* LOGO SCREEN */
-
-    #logoScreen{
-        position:absolute;
-        inset:0;
-        background:white;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        z-index:1000;
-    }
-
-    #logoScreen img{
-        width:min(60vw,320px);
-        animation:fadeIn 2s ease;
-    }
-
-    @keyframes fadeIn{
-        from{opacity:0;}
-        to{opacity:1;}
-    }
-
-    /* GAME AREA */
-
-    #gameScreen{
-        display:none;
-        width:100%;
-        height:100%;
-        position:relative;
-    }
-
-    .topBar{
-        width:100%;
-        padding:10px;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        gap:10px;
-        position:absolute;
-        top:0;
-        left:0;
-        z-index:10;
-    }
-
-    #questionBox{
-        background:rgba(255,255,255,0.9);
-        padding:12px 18px;
-        border-radius:18px;
-        font-size:clamp(18px,2.4vw,32px);
-        font-weight:bold;
-        color:#333;
-        text-align:center;
-        max-width:80%;
-        box-shadow:0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    #speakBtn{
-        width:55px;
-        height:55px;
-        border:none;
-        border-radius:50%;
-        background:#ffd166;
-        font-size:24px;
-        cursor:pointer;
-        box-shadow:0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    #slideImage{
-        position:absolute;
-        left:50%;
-        top:54%;
-        transform:translate(-50%,-50%);
-        max-width:92vw;
-        max-height:78vh;
-        object-fit:contain;
-        border-radius:20px;
-    }
-
-    canvas{
-        position:absolute;
-        inset:0;
-        z-index:5;
-    }
-
-    #nextMessage{
-        position:absolute;
-        bottom:20px;
-        left:50%;
-        transform:translateX(-50%);
-        background:#8bd17c;
-        color:white;
-        padding:12px 20px;
-        border-radius:16px;
-        font-size:24px;
-        display:none;
-        z-index:20;
-    }
-
-    #finishScreen{
-        display:none;
-        position:absolute;
-        inset:0;
-        background:rgba(255,255,255,0.95);
-        z-index:50;
-        justify-content:center;
-        align-items:center;
-        flex-direction:column;
-        text-align:center;
-        padding:20px;
-    }
-
-    #finishScreen h1{
-        font-size:clamp(34px,5vw,60px);
-        color:#ff6b6b;
-        margin-bottom:20px;
-    }
-
-    #finishScreen p{
-        font-size:clamp(22px,3vw,34px);
-        color:#333;
-    }
+}
 
 </style>
 </head>
@@ -157,16 +203,21 @@
 <div id="gameContainer">
 
     <!-- LOGO SCREEN -->
+
     <div id="logoScreen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
     <!-- GAME SCREEN -->
+
     <div id="gameScreen">
 
         <div class="topBar">
+
             <div id="questionBox"></div>
+
             <button id="speakBtn">🔊</button>
+
         </div>
 
         <img id="slideImage" src="" alt="Game Image">
@@ -177,57 +228,79 @@
 
     </div>
 
-    <!-- FINISH -->
+    <!-- FINISH SCREEN -->
+
     <div id="finishScreen">
+
         <h1>Wonderful! 🎉</h1>
+
         <p>You completed all the rounds!</p>
+
+        <button id="playAgainBtn">Play Again</button>
+
     </div>
 
 </div>
 
 <!-- AUDIO -->
+
 <audio id="rightSound" src="assets/right.mp3"></audio>
+
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
+
+/* =========================
+   GAME ROUNDS
+========================= */
 
 const rounds = [
 
 {
     image:'assets/downboy.png',
     question:'Circle the child who is down.',
-    correctArea:{x:0.50,y:0.70,r:0.18}
+    correctArea:{x:0.50,y:0.70,r:0.28}
 },
 
 {
     image:'assets/upgirl.png',
     question:'Circle the girl who is up.',
-    correctArea:{x:0.55,y:0.28,r:0.18}
+    correctArea:{x:0.55,y:0.28,r:0.28}
 },
 
 {
     image:'assets/upboy.png',
     question:'Circle the boy who is up.',
-    correctArea:{x:0.45,y:0.28,r:0.18}
+    correctArea:{x:0.45,y:0.28,r:0.28}
 },
 
 {
     image:'assets/downgirl.png',
     question:'Circle the girl who is down.',
-    correctArea:{x:0.52,y:0.72,r:0.18}
+    correctArea:{x:0.52,y:0.72,r:0.28}
 }
 
 ];
+
+/* =========================
+   VARIABLES
+========================= */
 
 let currentRound = 0;
 
 const logoScreen = document.getElementById('logoScreen');
 const gameScreen = document.getElementById('gameScreen');
+
 const questionBox = document.getElementById('questionBox');
 const slideImage = document.getElementById('slideImage');
+
 const speakBtn = document.getElementById('speakBtn');
+
 const nextMessage = document.getElementById('nextMessage');
+
 const finishScreen = document.getElementById('finishScreen');
+
+const playAgainBtn = document.getElementById('playAgainBtn');
 
 const rightSound = document.getElementById('rightSound');
 const wrongSound = document.getElementById('wrongSound');
@@ -236,21 +309,40 @@ const canvas = document.getElementById('drawCanvas');
 const ctx = canvas.getContext('2d');
 
 let drawing = false;
+
 let points = [];
 
+/* =========================
+   RESIZE CANVAS
+========================= */
+
 function resizeCanvas(){
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
 
 resizeCanvas();
+
 window.addEventListener('resize', resizeCanvas);
 
+/* =========================
+   START GAME AFTER LOGO
+========================= */
+
 setTimeout(()=>{
+
     logoScreen.style.display='none';
+
     gameScreen.style.display='block';
+
     loadRound();
+
 },5000);
+
+/* =========================
+   LOAD ROUND
+========================= */
 
 function loadRound(){
 
@@ -259,10 +351,15 @@ function loadRound(){
     const round = rounds[currentRound];
 
     slideImage.src = round.image;
+
     questionBox.innerText = round.question;
 
     speakQuestion(round.question);
 }
+
+/* =========================
+   VOICE
+========================= */
 
 function speakQuestion(text){
 
@@ -273,7 +370,9 @@ function speakQuestion(text){
         const speech = new SpeechSynthesisUtterance(text);
 
         speech.rate = 0.85;
+
         speech.pitch = 1;
+
         speech.volume = 1;
 
         window.speechSynthesis.speak(speech);
@@ -281,24 +380,33 @@ function speakQuestion(text){
 }
 
 speakBtn.addEventListener('click',()=>{
+
     speakQuestion(rounds[currentRound].question);
+
 });
 
+/* =========================
+   DRAWING
+========================= */
+
 function clearCanvas(){
+
     ctx.clearRect(0,0,canvas.width,canvas.height);
+
     points = [];
 }
 
 function getPos(e){
 
     if(e.touches){
-        return {
+
+        return{
             x:e.touches[0].clientX,
             y:e.touches[0].clientY
         };
     }
 
-    return {
+    return{
         x:e.clientX,
         y:e.clientY
     };
@@ -313,6 +421,7 @@ function startDraw(e){
     points.push(pos);
 
     ctx.beginPath();
+
     ctx.moveTo(pos.x,pos.y);
 }
 
@@ -325,10 +434,13 @@ function draw(e){
     points.push(pos);
 
     ctx.lineWidth = 8;
+
     ctx.lineCap = 'round';
-    ctx.strokeStyle = '#34c759';
+
+    ctx.strokeStyle = '#32c94d';
 
     ctx.lineTo(pos.x,pos.y);
+
     ctx.stroke();
 }
 
@@ -341,13 +453,25 @@ function endDraw(){
     checkAnswer();
 }
 
+/* =========================
+   EVENTS
+========================= */
+
 canvas.addEventListener('mousedown',startDraw);
+
 canvas.addEventListener('mousemove',draw);
+
 canvas.addEventListener('mouseup',endDraw);
 
 canvas.addEventListener('touchstart',startDraw,{passive:false});
+
 canvas.addEventListener('touchmove',draw,{passive:false});
+
 canvas.addEventListener('touchend',endDraw);
+
+/* =========================
+   CHECK ANSWER
+========================= */
 
 function checkAnswer(){
 
@@ -355,25 +479,37 @@ function checkAnswer(){
 
     const imgRect = slideImage.getBoundingClientRect();
 
-    let correct = false;
+    let hitCount = 0;
+
+    /* 
+       CHILDREN WILL DRAW ANY SHAPE.
+       THIS CHECKS IF MANY DRAW POINTS
+       TOUCH THE CORRECT PERSON AREA.
+    */
 
     for(let p of points){
 
         const relX = (p.x - imgRect.left) / imgRect.width;
+
         const relY = (p.y - imgRect.top) / imgRect.height;
 
         const dx = relX - round.correctArea.x;
+
         const dy = relY - round.correctArea.y;
 
         const distance = Math.sqrt(dx*dx + dy*dy);
 
         if(distance < round.correctArea.r){
-            correct = true;
-            break;
+
+            hitCount++;
         }
     }
 
-    if(correct){
+    /* ACCEPT IF ENOUGH POINTS TOUCH */
+
+    if(hitCount > 8){
+
+        rightSound.currentTime = 0;
 
         rightSound.play();
 
@@ -387,10 +523,10 @@ function checkAnswer(){
 
             if(currentRound >= rounds.length){
 
-                gameScreen.style.display='none';
-                finishScreen.style.display='flex';
+                endGame();
 
             }else{
+
                 loadRound();
             }
 
@@ -398,13 +534,90 @@ function checkAnswer(){
 
     }else{
 
+        wrongSound.currentTime = 0;
+
         wrongSound.play();
 
         setTimeout(()=>{
+
             clearCanvas();
+
         },700);
     }
 }
+
+/* =========================
+   END GAME
+========================= */
+
+function endGame(){
+
+    gameScreen.style.display='none';
+
+    finishScreen.style.display='flex';
+
+    createConfetti();
+}
+
+/* =========================
+   CONFETTI
+========================= */
+
+function createConfetti(){
+
+    const colors = [
+        '#ff595e',
+        '#ffca3a',
+        '#8ac926',
+        '#1982c4',
+        '#6a4c93',
+        '#ff924c'
+    ];
+
+    for(let i=0; i<120; i++){
+
+        const confetti = document.createElement('div');
+
+        confetti.classList.add('confetti');
+
+        confetti.style.left = Math.random()*100 + 'vw';
+
+        confetti.style.background = colors[Math.floor(Math.random()*colors.length)];
+
+        confetti.style.animationDuration =
+            (Math.random()*3 + 3) + 's';
+
+        confetti.style.opacity = Math.random();
+
+        confetti.style.transform =
+            `rotate(${Math.random()*360}deg)`;
+
+        finishScreen.appendChild(confetti);
+
+        setTimeout(()=>{
+            confetti.remove();
+        },7000);
+    }
+}
+
+/* =========================
+   PLAY AGAIN
+========================= */
+
+playAgainBtn.addEventListener('click',()=>{
+
+    currentRound = 0;
+
+    finishScreen.style.display='none';
+
+    gameScreen.style.display='block';
+
+    /* REMOVE OLD CONFETTI */
+
+    document.querySelectorAll('.confetti').forEach(c=>c.remove());
+
+    loadRound();
+});
 
 </script>
 
