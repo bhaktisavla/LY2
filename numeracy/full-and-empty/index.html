@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Full and Empty Game</title>
 
 <style>
@@ -16,8 +17,8 @@
 
 body{
     font-family:Arial,sans-serif;
-    overflow:hidden;
     background:#FFF7EC;
+    overflow:hidden;
 }
 
 #game{
@@ -34,8 +35,6 @@ body{
     height:100%;
     display:none;
     flex-direction:column;
-    align-items:center;
-    justify-content:flex-start;
     padding:10px;
 }
 
@@ -59,7 +58,6 @@ body{
 /* TOP BAR */
 
 .topBar{
-    width:100%;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -69,7 +67,7 @@ body{
 .round{
     background:#F4A261;
     color:white;
-    padding:8px 16px;
+    padding:8px 14px;
     border-radius:14px;
     font-size:18px;
     font-weight:bold;
@@ -77,76 +75,58 @@ body{
 
 .speakerBtn{
     border:none;
-    background:#5DBB9A;
-    color:white;
     width:52px;
     height:52px;
     border-radius:50%;
+    background:#5DBB9A;
+    color:white;
     font-size:24px;
 }
 
 /* QUESTION */
 
 .question{
+    text-align:center;
     font-size:22px;
     font-weight:bold;
     color:#5A4331;
-    text-align:center;
     margin-bottom:10px;
-    line-height:1.3;
 }
 
-/* ROUND 1 */
+/* ROUND 1 + 2 */
 
-.round1Grid{
-    width:100%;
+.grid{
     flex:1;
     display:grid;
-    grid-template-columns:1fr 1fr;
     gap:10px;
     justify-items:center;
     align-items:center;
 }
 
+.round1Grid{
+    grid-template-columns:1fr 1fr;
+}
+
+.round2Grid{
+    grid-template-columns:repeat(3,1fr);
+}
+
 .card{
     width:100%;
-    max-width:220px;
+    max-width:200px;
     background:white;
     border-radius:20px;
-    padding:10px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.12);
+    padding:8px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.12);
     border:5px solid transparent;
     transition:0.2s;
 }
 
 .card img{
     width:100%;
-    height:130px;
+    height:110px;
     object-fit:contain;
 }
-
-/* ROUND 2 FIXED */
-
-.round2Grid{
-    width:100%;
-    flex:1;
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
-    align-items:center;
-    justify-items:center;
-}
-
-.round2Grid .card{
-    max-width:180px;
-    padding:8px;
-}
-
-.round2Grid .card img{
-    height:90px;
-}
-
-/* CORRECT / WRONG */
 
 .correct{
     border-color:#69C37B;
@@ -161,7 +141,6 @@ body{
 /* ROUND 3 */
 
 .dragContainer{
-    width:100%;
     display:grid;
     grid-template-columns:repeat(4,1fr);
     gap:5px;
@@ -170,46 +149,45 @@ body{
 
 .dragItem{
     background:white;
-    border-radius:14px;
+    border-radius:12px;
     padding:4px;
-    box-shadow:0 3px 8px rgba(0,0,0,0.1);
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    touch-action:none;
 }
 
 .dragItem img{
     width:100%;
-    height:45px;
+    height:42px;
     object-fit:contain;
+    pointer-events:none;
 }
 
 .dropArea{
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
     flex:1;
+    display:flex;
+    gap:8px;
 }
 
 .dropZone{
-    width:48%;
+    flex:1;
     background:white;
     border:4px dashed #C7AF88;
-    border-radius:18px;
-    padding:6px;
-    min-height:130px;
+    border-radius:16px;
+    padding:5px;
     display:flex;
     flex-direction:column;
     align-items:center;
+    min-height:120px;
 }
 
 .dropZone img{
-    width:50px;
-    margin-bottom:4px;
+    width:45px;
 }
 
 .dropZone h2{
-    color:#5A4331;
     font-size:18px;
-    margin-bottom:4px;
+    color:#5A4331;
+    margin:4px 0;
 }
 
 .dropItems{
@@ -217,6 +195,12 @@ body{
     display:grid;
     grid-template-columns:repeat(2,1fr);
     gap:3px;
+}
+
+.dropItems img{
+    width:100%;
+    height:40px;
+    object-fit:contain;
 }
 
 /* FINISH */
@@ -237,9 +221,9 @@ body{
     border:none;
     background:#F4A261;
     color:white;
-    padding:16px 28px;
+    padding:16px 26px;
     border-radius:18px;
-    font-size:24px;
+    font-size:22px;
 }
 
 /* CONFETTI */
@@ -263,50 +247,35 @@ body{
 @media(max-width:768px){
 
     .question{
-        font-size:17px;
-    }
-
-    .round1Grid{
-        gap:6px;
+        font-size:18px;
     }
 
     .card{
-        max-width:150px;
+        max-width:120px;
     }
 
     .card img{
-        height:85px;
+        height:70px;
     }
-
-    /* ROUND 2 MOBILE FIX */
 
     .round2Grid{
         gap:5px;
     }
 
-    .round2Grid .card{
-        max-width:115px;
-        padding:5px;
-    }
-
-    .round2Grid .card img{
-        height:58px;
-    }
-
     .dragItem img{
-        height:35px;
+        height:30px;
     }
 
     .dropZone{
-        min-height:100px;
+        min-height:95px;
     }
 
     .dropZone img{
-        width:40px;
+        width:35px;
     }
 
     .dropZone h2{
-        font-size:16px;
+        font-size:15px;
     }
 
 }
@@ -344,7 +313,7 @@ body{
         Tap all the objects which are FULL.
     </div>
 
-    <div class="round1Grid">
+    <div class="grid round1Grid">
 
         <div class="card r1" data-correct="false">
             <img src="assets/emptyvessel.png">
@@ -386,7 +355,7 @@ body{
         Tap all the objects which are EMPTY.
     </div>
 
-    <div class="round2Grid">
+    <div class="grid round2Grid">
 
         <div class="card r2" data-correct="false">
             <img src="assets/fullpopcorn.png">
@@ -438,35 +407,35 @@ body{
 
     <div class="dragContainer">
 
-        <div class="dragItem" draggable="true" data-type="empty">
+        <div class="dragItem" data-type="empty">
             <img src="assets/basketempty.png">
         </div>
 
-        <div class="dragItem" draggable="true" data-type="full">
+        <div class="dragItem" data-type="full">
             <img src="assets/basketfulltomato.png">
         </div>
 
-        <div class="dragItem" draggable="true" data-type="full">
+        <div class="dragItem" data-type="full">
             <img src="assets/cartfull.png">
         </div>
 
-        <div class="dragItem" draggable="true" data-type="empty">
+        <div class="dragItem" data-type="empty">
             <img src="assets/cartempty.png">
         </div>
 
-        <div class="dragItem" draggable="true" data-type="empty">
+        <div class="dragItem" data-type="empty">
             <img src="assets/nestempty.png">
         </div>
 
-        <div class="dragItem" draggable="true" data-type="full">
+        <div class="dragItem" data-type="full">
             <img src="assets/nestfull.png">
         </div>
 
-        <div class="dragItem" draggable="true" data-type="empty">
+        <div class="dragItem" data-type="empty">
             <img src="assets/chestempty.png">
         </div>
 
-        <div class="dragItem" draggable="true" data-type="full">
+        <div class="dragItem" data-type="full">
             <img src="assets/chestfull.png">
         </div>
 
@@ -512,10 +481,14 @@ body{
 
 </div>
 
+<!-- AUDIO -->
+
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
+
+/* VOICE */
 
 const round1Voice =
 "Tap all the objects which are full.";
@@ -525,6 +498,8 @@ const round2Voice =
 
 const round3Voice =
 "Drag empty objects to empty and full objects to full.";
+
+/* AUDIO */
 
 const correctSound =
 document.getElementById("correctSound");
@@ -546,7 +521,7 @@ setTimeout(()=>{
 
 },5000);
 
-/* SPEAK */
+/* SPEECH */
 
 function speak(text){
 
@@ -577,6 +552,7 @@ document.querySelectorAll(".r1").forEach(card=>{
 
             card.classList.add("correct","done");
 
+            correctSound.currentTime = 0;
             correctSound.play();
 
             round1Correct++;
@@ -594,17 +570,20 @@ document.querySelectorAll(".r1").forEach(card=>{
                     speak(round2Voice);
 
                 },1000);
+
             }
 
         }else{
 
-            card.classList.add("wrong");
-
+            wrongSound.currentTime = 0;
             wrongSound.play();
+
+            card.classList.add("wrong");
 
             setTimeout(()=>{
                 card.classList.remove("wrong");
             },600);
+
         }
 
     });
@@ -625,6 +604,7 @@ document.querySelectorAll(".r2").forEach(card=>{
 
             card.classList.add("correct","done");
 
+            correctSound.currentTime = 0;
             correctSound.play();
 
             round2Correct++;
@@ -642,87 +622,95 @@ document.querySelectorAll(".r2").forEach(card=>{
                     speak(round3Voice);
 
                 },1000);
+
             }
 
         }else{
 
-            card.classList.add("wrong");
-
+            wrongSound.currentTime = 0;
             wrongSound.play();
+
+            card.classList.add("wrong");
 
             setTimeout(()=>{
                 card.classList.remove("wrong");
             },600);
+
         }
 
     });
 
 });
 
-/* DRAG DROP */
+/* ROUND 3 MOBILE FIX */
 
-let dragged = null;
 let placed = 0;
 
 document.querySelectorAll(".dragItem").forEach(item=>{
 
-    item.addEventListener("dragstart",()=>{
-        dragged = item;
-    });
+    item.addEventListener("click",()=>{
 
-    item.addEventListener("touchstart",()=>{
-        dragged = item;
+        selectedItem = item;
+
+        document.querySelectorAll(".dragItem")
+        .forEach(i=>i.style.border="none");
+
+        item.style.border =
+        "4px solid #5DBB9A";
+
     });
 
 });
+
+let selectedItem = null;
 
 document.querySelectorAll(".dropZone").forEach(zone=>{
 
-    zone.addEventListener("dragover",(e)=>{
-        e.preventDefault();
-    });
+    zone.addEventListener("click",()=>{
 
-    zone.addEventListener("drop",(e)=>{
-        e.preventDefault();
-        handleDrop(zone);
-    });
+        if(!selectedItem) return;
 
-    zone.addEventListener("touchend",()=>{
-        handleDrop(zone);
+        const itemType =
+        selectedItem.dataset.type;
+
+        const zoneType =
+        zone.dataset.zone;
+
+        if(itemType === zoneType){
+
+            correctSound.currentTime = 0;
+            correctSound.play();
+
+            zone.querySelector(".dropItems")
+            .appendChild(selectedItem);
+
+            selectedItem.style.border = "none";
+
+            selectedItem.style.pointerEvents =
+            "none";
+
+            placed++;
+
+            selectedItem = null;
+
+            if(placed === 8){
+
+                setTimeout(()=>{
+                    finishGame();
+                },1000);
+
+            }
+
+        }else{
+
+            wrongSound.currentTime = 0;
+            wrongSound.play();
+
+        }
+
     });
 
 });
-
-function handleDrop(zone){
-
-    if(!dragged) return;
-
-    const itemType = dragged.dataset.type;
-    const zoneType = zone.dataset.zone;
-
-    if(itemType === zoneType){
-
-        correctSound.play();
-
-        zone.querySelector(".dropItems")
-        .appendChild(dragged);
-
-        placed++;
-
-        if(placed === 8){
-
-            setTimeout(()=>{
-                finishGame();
-            },1000);
-        }
-
-    }else{
-
-        wrongSound.play();
-    }
-
-    dragged = null;
-}
 
 /* FINISH */
 
@@ -759,7 +747,9 @@ function createConfetti(){
         (Math.random()*3+2)+"s";
 
         document.body.appendChild(confetti);
+
     }
+
 }
 
 </script>
