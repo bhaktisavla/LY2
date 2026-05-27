@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
 <title>Full and Empty Game</title>
 
 <style>
@@ -16,7 +15,7 @@
 }
 
 body{
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
     overflow:hidden;
     background:#FFF7EC;
 }
@@ -64,7 +63,7 @@ body{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:10px;
+    margin-bottom:8px;
 }
 
 .round{
@@ -97,26 +96,23 @@ body{
     line-height:1.3;
 }
 
-/* ROUND 1 + 2 */
+/* ROUND 1 */
 
-.grid{
+.round1Grid{
     width:100%;
     flex:1;
     display:grid;
+    grid-template-columns:1fr 1fr;
     gap:10px;
     justify-items:center;
     align-items:center;
-}
-
-.grid.two{
-    grid-template-columns:1fr 1fr;
 }
 
 .card{
     width:100%;
     max-width:220px;
     background:white;
-    border-radius:22px;
+    border-radius:20px;
     padding:10px;
     box-shadow:0 4px 10px rgba(0,0,0,0.12);
     border:5px solid transparent;
@@ -125,9 +121,32 @@ body{
 
 .card img{
     width:100%;
-    height:140px;
+    height:130px;
     object-fit:contain;
 }
+
+/* ROUND 2 FIXED */
+
+.round2Grid{
+    width:100%;
+    flex:1;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    align-items:center;
+    justify-items:center;
+}
+
+.round2Grid .card{
+    max-width:180px;
+    padding:8px;
+}
+
+.round2Grid .card img{
+    height:90px;
+}
+
+/* CORRECT / WRONG */
 
 .correct{
     border-color:#69C37B;
@@ -145,20 +164,20 @@ body{
     width:100%;
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:6px;
-    margin-bottom:10px;
+    gap:5px;
+    margin-bottom:8px;
 }
 
 .dragItem{
     background:white;
     border-radius:14px;
-    padding:5px;
+    padding:4px;
     box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
 
 .dragItem img{
     width:100%;
-    height:50px;
+    height:45px;
     object-fit:contain;
 }
 
@@ -174,30 +193,30 @@ body{
     width:48%;
     background:white;
     border:4px dashed #C7AF88;
-    border-radius:20px;
-    padding:8px;
-    min-height:150px;
+    border-radius:18px;
+    padding:6px;
+    min-height:130px;
     display:flex;
     flex-direction:column;
     align-items:center;
 }
 
 .dropZone img{
-    width:60px;
-    margin-bottom:5px;
+    width:50px;
+    margin-bottom:4px;
 }
 
 .dropZone h2{
     color:#5A4331;
-    font-size:20px;
-    margin-bottom:5px;
+    font-size:18px;
+    margin-bottom:4px;
 }
 
 .dropItems{
     width:100%;
     display:grid;
     grid-template-columns:repeat(2,1fr);
-    gap:4px;
+    gap:3px;
 }
 
 /* FINISH */
@@ -209,7 +228,7 @@ body{
 }
 
 #finishScreen h1{
-    font-size:42px;
+    font-size:40px;
     color:#5A4331;
     margin-bottom:20px;
 }
@@ -244,35 +263,50 @@ body{
 @media(max-width:768px){
 
     .question{
-        font-size:18px;
+        font-size:17px;
+    }
+
+    .round1Grid{
+        gap:6px;
     }
 
     .card{
-        max-width:160px;
+        max-width:150px;
     }
 
     .card img{
-        height:90px;
+        height:85px;
     }
 
-    .dragContainer{
-        gap:4px;
+    /* ROUND 2 MOBILE FIX */
+
+    .round2Grid{
+        gap:5px;
+    }
+
+    .round2Grid .card{
+        max-width:115px;
+        padding:5px;
+    }
+
+    .round2Grid .card img{
+        height:58px;
     }
 
     .dragItem img{
-        height:38px;
+        height:35px;
     }
 
     .dropZone{
-        min-height:110px;
+        min-height:100px;
     }
 
     .dropZone img{
-        width:45px;
+        width:40px;
     }
 
     .dropZone h2{
-        font-size:18px;
+        font-size:16px;
     }
 
 }
@@ -310,7 +344,7 @@ body{
         Tap all the objects which are FULL.
     </div>
 
-    <div class="grid two">
+    <div class="round1Grid">
 
         <div class="card r1" data-correct="false">
             <img src="assets/emptyvessel.png">
@@ -352,7 +386,7 @@ body{
         Tap all the objects which are EMPTY.
     </div>
 
-    <div class="grid two">
+    <div class="round2Grid">
 
         <div class="card r2" data-correct="false">
             <img src="assets/fullpopcorn.png">
@@ -478,14 +512,10 @@ body{
 
 </div>
 
-<!-- AUDIO -->
-
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
-
-/* VOICE */
 
 const round1Voice =
 "Tap all the objects which are full.";
@@ -496,15 +526,13 @@ const round2Voice =
 const round3Voice =
 "Drag empty objects to empty and full objects to full.";
 
-/* AUDIO */
-
 const correctSound =
 document.getElementById("correctSound");
 
 const wrongSound =
 document.getElementById("wrongSound");
 
-/* START GAME */
+/* START */
 
 setTimeout(()=>{
 
@@ -518,7 +546,7 @@ setTimeout(()=>{
 
 },5000);
 
-/* SPEECH */
+/* SPEAK */
 
 function speak(text){
 
@@ -526,7 +554,7 @@ function speak(text){
 
         speechSynthesis.cancel();
 
-        const speech =
+        let speech =
         new SpeechSynthesisUtterance(text);
 
         speech.rate = 0.9;
@@ -639,12 +667,10 @@ let placed = 0;
 document.querySelectorAll(".dragItem").forEach(item=>{
 
     item.addEventListener("dragstart",()=>{
-
         dragged = item;
     });
 
     item.addEventListener("touchstart",()=>{
-
         dragged = item;
     });
 
@@ -657,14 +683,11 @@ document.querySelectorAll(".dropZone").forEach(zone=>{
     });
 
     zone.addEventListener("drop",(e)=>{
-
         e.preventDefault();
-
         handleDrop(zone);
     });
 
     zone.addEventListener("touchend",()=>{
-
         handleDrop(zone);
     });
 
