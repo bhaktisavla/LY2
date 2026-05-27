@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Full and Empty Game</title>
 
@@ -19,7 +19,6 @@ body{
 font-family:Arial,sans-serif;
 background:#FFF7EC;
 overflow:hidden;
-touch-action:none;
 }
 
 #game{
@@ -154,7 +153,6 @@ background:white;
 border-radius:12px;
 padding:4px;
 box-shadow:0 2px 6px rgba(0,0,0,0.12);
-position:relative;
 touch-action:none;
 }
 
@@ -181,7 +179,6 @@ display:flex;
 flex-direction:column;
 align-items:center;
 min-height:120px;
-position:relative;
 }
 
 .dropZone img{
@@ -478,8 +475,7 @@ Play Again
 
 <!-- AUDIO -->
 
-<audio id="correctSound" src="assets/freesound_community-claps-44774.mp3"></audio>
-
+<audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
@@ -640,104 +636,44 @@ card.classList.remove("wrong");
 
 });
 
-/* ROUND 3 TRUE MOBILE DRAG DROP */
+/* ROUND 3 - WORKS ON BOTH MOBILE + LAPTOP */
 
-let currentItem = null;
+let draggedItem = null;
 let placed = 0;
 
-document.querySelectorAll(".dragItem").forEach(item=>{
+const dragItems =
+document.querySelectorAll(".dragItem");
+
+const dropZones =
+document.querySelectorAll(".dropZone");
 
 /* DESKTOP */
 
+dragItems.forEach(item=>{
+
+item.setAttribute("draggable","true");
+
 item.addEventListener("dragstart",()=>{
 
-currentItem = item;
+draggedItem = item;
+
+setTimeout(()=>{
+item.style.opacity = "0.5";
+},0);
 
 });
 
-/* MOBILE TOUCH */
+item.addEventListener("dragend",()=>{
 
-item.addEventListener("touchstart",(e)=>{
-
-currentItem = item;
-
-item.style.position = "absolute";
-item.style.zIndex = "1000";
-
-moveAt(e.touches[0].pageX,e.touches[0].pageY);
-
-function moveAt(x,y){
-
-item.style.left = x - item.offsetWidth/2 + "px";
-item.style.top = y - item.offsetHeight/2 + "px";
-
-}
-
-function onTouchMove(e){
-
-moveAt(
-e.touches[0].pageX,
-e.touches[0].pageY
-);
-
-}
-
-document.addEventListener(
-"touchmove",
-onTouchMove
-);
-
-item.ontouchend = function(e){
-
-document.removeEventListener(
-"touchmove",
-onTouchMove
-);
-
-let dropped = false;
-
-document.querySelectorAll(".dropZone")
-.forEach(zone=>{
-
-const rect =
-zone.getBoundingClientRect();
-
-const touch =
-e.changedTouches[0];
-
-if(
-touch.clientX > rect.left &&
-touch.clientX < rect.right &&
-touch.clientY > rect.top &&
-touch.clientY < rect.bottom
-){
-
-handleDrop(zone,item);
-
-dropped = true;
-
-}
+item.style.opacity = "1";
 
 });
-
-if(!dropped){
-
-item.style.position = "relative";
-item.style.left = "0";
-item.style.top = "0";
-
-}
-
-};
 
 });
 
 /* DESKTOP DROP */
 
-});
-
-document.querySelectorAll(".dropZone")
-.forEach(zone=>{
+dropZones.forEach(zone=>{
 
 zone.addEventListener("dragover",(e)=>{
 e.preventDefault();
@@ -747,15 +683,89 @@ zone.addEventListener("drop",(e)=>{
 
 e.preventDefault();
 
-handleDrop(zone,currentItem);
+if(!draggedItem) return;
+
+checkDrop(zone,draggedItem);
 
 });
 
 });
 
-function handleDrop(zone,item){
+/* MOBILE TOUCH */
 
-if(!item) return;
+dragItems.forEach(item=>{
+
+let moveX = 0;
+let moveY = 0;
+
+item.addEventListener("touchstart",(e)=>{
+
+draggedItem = item;
+
+item.style.position = "fixed";
+item.style.zIndex = "9999";
+item.style.pointerEvents = "none";
+
+});
+
+item.addEventListener("touchmove",(e)=>{
+
+if(!draggedItem) return;
+
+const touch = e.touches[0];
+
+moveX = touch.clientX;
+moveY = touch.clientY;
+
+item.style.left =
+(moveX - item.offsetWidth/2)+"px";
+
+item.style.top =
+(moveY - item.offsetHeight/2)+"px";
+
+});
+
+item.addEventListener("touchend",()=>{
+
+if(!draggedItem) return;
+
+let dropped = false;
+
+dropZones.forEach(zone=>{
+
+const rect =
+zone.getBoundingClientRect();
+
+if(
+moveX > rect.left &&
+moveX < rect.right &&
+moveY > rect.top &&
+moveY < rect.bottom
+){
+
+checkDrop(zone,item);
+
+dropped = true;
+
+}
+
+});
+
+if(!dropped){
+
+resetItem(item);
+
+}
+
+draggedItem = null;
+
+});
+
+});
+
+/* CHECK DROP */
+
+function checkDrop(zone,item){
 
 const itemType =
 item.dataset.type;
@@ -771,7 +781,7 @@ zone.querySelector(".dropItems")
 item.style.position = "relative";
 item.style.left = "0";
 item.style.top = "0";
-
+item.style.opacity = "1";
 item.style.pointerEvents = "none";
 
 placed++;
@@ -792,11 +802,22 @@ finishGame();
 wrongSound.currentTime = 0;
 wrongSound.play();
 
+resetItem(item);
+
+}
+
+}
+
+/* RESET */
+
+function resetItem(item){
+
 item.style.position = "relative";
 item.style.left = "0";
 item.style.top = "0";
-
-}
+item.style.opacity = "1";
+item.style.zIndex = "1";
+item.style.pointerEvents = "auto";
 
 }
 
