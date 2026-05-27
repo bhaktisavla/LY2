@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Full and Empty Game</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body{
+  font-family: Arial, sans-serif;
+  background:#FFF7E8;
+  overflow:hidden;
+  touch-action:manipulation;
+}
+
+#game{
+  width:100vw;
+  height:100vh;
+  position:relative;
+  overflow:hidden;
+}
+
+.screen{
+  width:100%;
+  height:100%;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding:10px;
+}
+
+.active{
+  display:flex;
+}
+
+.logo-screen{
+  background:#FFE8B5;
+  justify-content:center;
+}
+
+.logo-screen img{
+  width:280px;
+  max-width:80%;
+  animation:flash 1s infinite;
+}
+
+@keyframes flash{
+  0%{opacity:1;}
+  50%{opacity:0.5;}
+  100%{opacity:1;}
+}
+
+.top-bar{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+
+.round{
+  background:#FFB84D;
+  color:#fff;
+  padding:8px 14px;
+  border-radius:12px;
+  font-weight:bold;
+  font-size:18px;
+}
+
+.speaker{
+  background:#6CC4A1;
+  border:none;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  font-size:20px;
+}
+
+.question{
+  font-size:24px;
+  text-align:center;
+  color:#5A3D2B;
+  font-weight:bold;
+  margin:8px 0 10px;
+  line-height:1.3;
+}
+
+.grid{
+  width:100%;
+  flex:1;
+  display:grid;
+  gap:14px;
+  align-items:center;
+  justify-items:center;
+}
+
+.grid.two{
+  grid-template-columns:1fr 1fr;
+}
+
+.grid.three{
+  grid-template-columns:1fr 1fr 1fr;
+}
+
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:10px;
+  width:100%;
+  max-width:260px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 10px rgba(0,0,0,0.12);
+  border:4px solid transparent;
+  transition:0.2s;
+}
+
+.card img{
+  width:100%;
+  max-height:180px;
+  object-fit:contain;
+}
+
+.label{
+  font-size:22px;
+  font-weight:bold;
+  color:#5A3D2B;
+  margin-top:6px;
+}
+
+.correct{
+  border-color:#63C174;
+}
+
+.wrong{
+  border-color:#E46A6A;
+}
+
+.section{
+  width:100%;
+  background:#fff;
+  border-radius:18px;
+  padding:8px;
+  margin-bottom:10px;
+}
+
+.section-title{
+  font-size:20px;
+  font-weight:bold;
+  text-align:center;
+  color:#5A3D2B;
+  margin-bottom:8px;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+}
+
+.row .card{
+  width:45%;
+}
+
+.drag-area{
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  align-items:flex-start;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.draggables{
+  width:100%;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.drag-item{
+  width:120px;
+  background:#fff;
+  padding:8px;
+  border-radius:18px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+.drag-item img{
+  width:100%;
+  height:90px;
+  object-fit:contain;
+}
+
+.drop-zone{
+  width:45%;
+  min-height:180px;
+  background:#fff;
+  border:4px dashed #C9B18D;
+  border-radius:20px;
+  padding:10px;
+  text-align:center;
+}
+
+.drop-zone img{
+  width:90px;
+}
+
+.drop-zone h2{
+  color:#5A3D2B;
+  margin-top:8px;
+}
+
+.finish-screen{
+  background:#FFF4D6;
+  justify-content:center;
+}
+
+.finish-screen h1{
+  color:#5A3D2B;
+  font-size:42px;
+  margin-bottom:20px;
+}
+
+.play-again{
+  background:#FF9F68;
+  color:white;
+  border:none;
+  padding:16px 30px;
+  font-size:24px;
+  border-radius:18px;
+}
+
+.confetti{
+  position:absolute;
+  width:10px;
+  height:10px;
+  top:-10px;
+  animation:fall linear forwards;
+}
+
+@keyframes fall{
+  to{
+    transform:translateY(110vh) rotate(720deg);
+  }
+}
+
+@media(max-width:768px){
+
+  .question{
+    font-size:20px;
+  }
+
+  .label{
+    font-size:18px;
+  }
+
+  .card img{
+    max-height:120px;
+  }
+
+  .drop-zone{
+    min-height:150px;
+  }
+
+  .drag-item{
+    width:90px;
+  }
+
+  .drag-item img{
+    height:70px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+  <!-- LOGO SCREEN -->
+  <div class="screen logo-screen active" id="logoScreen">
+    <img src="assets/innovine-logo.png" alt="logo">
+  </div>
+
+  <!-- ROUND 1 -->
+  <div class="screen" id="round1">
+    <div class="top-bar">
+      <div class="round">Round 1</div>
+      <button class="speaker" onclick="speakText(round1Question)">🔊</button>
+    </div>
+
+    <div class="question">
+      Tick the object which is full.
+    </div>
+
+    <div class="grid two">
+
+      <div class="card selectable" data-correct="true">
+        <img src="assets/cartfull.png">
+        <div class="label">FULL</div>
+      </div>
+
+      <div class="card selectable" data-correct="false">
+        <img src="assets/cartempty.png">
+        <div class="label">EMPTY</div>
+      </div>
+
+      <div class="card selectable" data-correct="false">
+        <img src="assets/chestempty.png">
+        <div class="label">EMPTY</div>
+      </div>
+
+      <div class="card selectable" data-correct="true">
+        <img src="assets/chestfull.png">
+        <div class="label">FULL</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ROUND 2 -->
+  <div class="screen" id="round2">
+
+    <div class="top-bar">
+      <div class="round">Round 2</div>
+      <button class="speaker" onclick="speakText(round2Question)">🔊</button>
+    </div>
+
+    <div class="question">
+      Look carefully and choose the correct picture.
+    </div>
+
+    <div class="section">
+      <div class="section-title">Which basket is FULL?</div>
+      <div class="row">
+        <div class="card selectable" data-correct="true">
+          <img src="assets/basketfulltomato.png">
+          <div class="label">FULL</div>
+        </div>
+
+        <div class="card selectable" data-correct="false">
+          <img src="assets/basketempty.png">
+          <div class="label">EMPTY</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Which nest is EMPTY?</div>
+      <div class="row">
+        <div class="card selectable" data-correct="true">
+          <img src="assets/nestempty.png">
+          <div class="label">EMPTY</div>
+        </div>
+
+        <div class="card selectable" data-correct="false">
+          <img src="assets/nestfull.png">
+          <div class="label">FULL</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROUND 3 -->
+  <div class="screen" id="round3">
+
+    <div class="top-bar">
+      <div class="round">Round 3</div>
+      <button class="speaker" onclick="speakText(round3Question)">🔊</button>
+    </div>
+
+    <div class="question">
+      Tick the object which is empty.
+    </div>
+
+    <div class="grid two">
+
+      <div class="card selectable" data-correct="true">
+        <img src="assets/basketempty.png">
+        <div class="label">EMPTY</div>
+      </div>
+
+      <div class="card selectable" data-correct="false">
+        <img src="assets/basketfulltomato.png">
+        <div class="label">FULL</div>
+      </div>
+
+      <div class="card selectable" data-correct="false">
+        <img src="assets/nestfull.png">
+        <div class="label">FULL</div>
+      </div>
+
+      <div class="card selectable" data-correct="true">
+        <img src="assets/nestempty.png">
+        <div class="label">EMPTY</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ROUND 4 -->
+  <div class="screen" id="round4">
+
+    <div class="top-bar">
+      <div class="round">Round 4</div>
+      <button class="speaker" onclick="speakText(round4Question)">🔊</button>
+    </div>
+
+    <div class="question">
+      Drag the empty objects to EMPTY and full objects to FULL.
+    </div>
+
+    <div class="draggables">
+
+      <div class="drag-item" draggable="true" data-type="empty">
+        <img src="assets/basketempty.png">
+      </div>
+
+      <div class="drag-item" draggable="true" data-type="full">
+        <img src="assets/basketfulltomato.png">
+      </div>
+
+      <div class="drag-item" draggable="true" data-type="full">
+        <img src="assets/cartfull.png">
+      </div>
+
+      <div class="drag-item" draggable="true" data-type="empty">
+        <img src="assets/cartempty.png">
+      </div>
+
+      <div class="drag-item" draggable="true" data-type="empty">
+        <img src="assets/chestempty.png">
+      </div>
+
+      <div class="drag-item" draggable="true" data-type="full">
+        <img src="assets/chestfull.png">
+      </div>
+
+      <div class="drag-item" draggable="true" data-type="empty">
+        <img src="assets/nestempty.png">
+      </div>
+
+      <div class="drag-item" draggable="true" data-type="full">
+        <img src="assets/nestfull.png">
+      </div>
+
+    </div>
+
+    <div class="drag-area">
+
+      <div class="drop-zone" data-zone="empty">
+        <img src="assets/empty.png">
+        <h2>EMPTY</h2>
+      </div>
+
+      <div class="drop-zone" data-zone="full">
+        <img src="assets/full.png">
+        <h2>FULL</h2>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ROUND 5 -->
+  <div class="screen" id="round5">
+
+    <div class="top-bar">
+      <div class="round">Round 5</div>
+      <button class="speaker" onclick="speakText(round5Question)">🔊</button>
+    </div>
+
+    <div class="question">
+      Tap all FULL items and avoid EMPTY items.
+    </div>
+
+    <div class="grid three">
+
+      <div class="card selectable" data-correct="true">
+        <img src="assets/cartfull.png">
+        <div class="label">FULL</div>
+      </div>
+
+      <div class="card selectable" data-correct="false">
+        <img src="assets/cartempty.png">
+        <div class="label">EMPTY</div>
+      </div>
+
+      <div class="card selectable" data-correct="true">
+        <img src="assets/chestfull.png">
+        <div class="label">FULL</div>
+      </div>
+
+      <div class="card selectable" data-correct="false">
+        <img src="assets/chestempty.png">
+        <div class="label">EMPTY</div>
+      </div>
+
+      <div class="card selectable" data-correct="true">
+        <img src="assets/nestfull.png">
+        <div class="label">FULL</div>
+      </div>
+
+      <div class="card selectable" data-correct="false">
+        <img src="assets/nestempty.png">
+        <div class="label">EMPTY</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FINISH -->
+  <div class="screen finish-screen" id="finishScreen">
+    <h1>Great Job!</h1>
+    <button class="play-again" onclick="location.reload()">Play Again</button>
+  </div>
+
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<script>
+
+const round1Question = "Tick the object which is full.";
+const round2Question = "Look carefully and choose the correct picture.";
+const round3Question = "Tick the object which is empty.";
+const round4Question = "Drag the empty objects to empty and full objects to full.";
+const round5Question = "Tap all full items and avoid empty items.";
+
+const correctSound = document.getElementById("correctSound");
+const wrongSound = document.getElementById("wrongSound");
+
+let currentRound = 1;
+
+setTimeout(()=>{
+  showRound(1);
+  speakText(round1Question);
+},5000);
+
+function showRound(num){
+
+  document.querySelectorAll(".screen").forEach(s=>{
+    s.classList.remove("active");
+  });
+
+  document.getElementById("round"+num).classList.add("active");
+  currentRound = num;
+}
+
+function nextRound(){
+
+  if(currentRound < 5){
+
+    currentRound++;
+
+    showRound(currentRound);
+
+    if(currentRound===2) speakText(round2Question);
+    if(currentRound===3) speakText(round3Question);
+    if(currentRound===4) speakText(round4Question);
+    if(currentRound===5) speakText(round5Question);
+
+  }else{
+    finishGame();
+  }
+}
+
+function speakText(text){
+
+  if('speechSynthesis' in window){
+
+    speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(text);
+
+    speech.rate = 0.9;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    speechSynthesis.speak(speech);
+  }
+}
+
+document.querySelectorAll(".selectable").forEach(card=>{
+
+  card.addEventListener("click", ()=>{
+
+    if(card.classList.contains("done")) return;
+
+    const correct = card.dataset.correct === "true";
+
+    if(correct){
+
+      card.classList.add("correct","done");
+      correctSound.play();
+
+      setTimeout(()=>{
+        nextRound();
+      },1200);
+
+    }else{
+
+      card.classList.add("wrong");
+
+      wrongSound.play();
+
+      setTimeout(()=>{
+        card.classList.remove("wrong");
+      },800);
+    }
+  });
+});
+
+
+// DRAG AND DROP
+
+let draggedItem = null;
+let placedItems = 0;
+
+document.querySelectorAll(".drag-item").forEach(item=>{
+
+  item.addEventListener("dragstart", ()=>{
+    draggedItem = item;
+  });
+
+  item.addEventListener("touchstart", ()=>{
+    draggedItem = item;
+  });
+
+});
+
+document.querySelectorAll(".drop-zone").forEach(zone=>{
+
+  zone.addEventListener("dragover",(e)=>{
+    e.preventDefault();
+  });
+
+  zone.addEventListener("drop",(e)=>{
+    e.preventDefault();
+    handleDrop(zone);
+  });
+
+  zone.addEventListener("touchend", ()=>{
+    handleDrop(zone);
+  });
+
+});
+
+function handleDrop(zone){
+
+  if(!draggedItem) return;
+
+  const itemType = draggedItem.dataset.type;
+  const zoneType = zone.dataset.zone;
+
+  if(itemType === zoneType){
+
+    correctSound.play();
+
+    zone.appendChild(draggedItem);
+
+    draggedItem.style.width = "70px";
+
+    placedItems++;
+
+    if(placedItems >= 8){
+
+      setTimeout(()=>{
+        nextRound();
+      },1000);
+    }
+
+  }else{
+
+    wrongSound.play();
+  }
+
+  draggedItem = null;
+}
+
+function finishGame(){
+
+  document.querySelectorAll(".screen").forEach(s=>{
+    s.classList.remove("active");
+  });
+
+  document.getElementById("finishScreen").classList.add("active");
+
+  createConfetti();
+}
+
+function createConfetti(){
+
+  for(let i=0;i<120;i++){
+
+    const confetti = document.createElement("div");
+
+    confetti.classList.add("confetti");
+
+    confetti.style.left = Math.random()*100 + "vw";
+
+    confetti.style.background = 
+      ["#F9A826","#6CC4A1","#FF7B7B","#6FA8DC","#FFD966"]
+      [Math.floor(Math.random()*5)];
+
+    confetti.style.animationDuration =
+      (Math.random()*3 + 2) + "s";
+
+    confetti.style.width =
+      confetti.style.height =
+      (Math.random()*10 + 6) + "px";
+
+    document.body.appendChild(confetti);
+  }
+}
+
+</script>
+
+</body>
+</html>
