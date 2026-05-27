@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
 
 <title>Up and Down Game</title>
 
@@ -21,8 +26,6 @@ body{
     background:#dff5ff;
 }
 
-/* MAIN GAME CONTAINER */
-
 #gameContainer{
     width:100vw;
     height:100vh;
@@ -31,7 +34,9 @@ body{
     background:url('assets/garden.jpg') center center/cover no-repeat;
 }
 
-/* LOGO SCREEN */
+/* ======================
+   LOGO SCREEN
+====================== */
 
 #logoScreen{
     position:absolute;
@@ -45,15 +50,11 @@ body{
 
 #logoScreen img{
     width:min(60vw,320px);
-    animation:fadeIn 2s ease;
 }
 
-@keyframes fadeIn{
-    from{opacity:0;}
-    to{opacity:1;}
-}
-
-/* GAME SCREEN */
+/* ======================
+   GAME SCREEN
+====================== */
 
 #gameScreen{
     display:none;
@@ -62,7 +63,9 @@ body{
     position:relative;
 }
 
-/* QUESTION AREA */
+/* ======================
+   TOP BAR
+====================== */
 
 .topBar{
     width:100%;
@@ -74,11 +77,11 @@ body{
     position:absolute;
     top:0;
     left:0;
-    z-index:20;
+    z-index:50;
 }
 
 #questionBox{
-    background:rgba(255,255,255,0.92);
+    background:rgba(255,255,255,0.93);
     padding:12px 18px;
     border-radius:18px;
     font-size:clamp(18px,2.5vw,32px);
@@ -97,10 +100,11 @@ body{
     background:#ffd166;
     font-size:24px;
     cursor:pointer;
-    box-shadow:0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* ROUND IMAGE */
+/* ======================
+   IMAGE
+====================== */
 
 #slideImage{
     position:absolute;
@@ -113,15 +117,19 @@ body{
     border-radius:20px;
 }
 
-/* DRAW CANVAS */
+/* ======================
+   DRAW CANVAS
+====================== */
 
 canvas{
     position:absolute;
     inset:0;
-    z-index:10;
+    z-index:20;
 }
 
-/* SUCCESS MESSAGE */
+/* ======================
+   SUCCESS MESSAGE
+====================== */
 
 #nextMessage{
     position:absolute;
@@ -134,21 +142,22 @@ canvas{
     border-radius:16px;
     font-size:24px;
     display:none;
-    z-index:50;
+    z-index:100;
 }
 
-/* FINISH SCREEN */
+/* ======================
+   FINISH SCREEN
+====================== */
 
 #finishScreen{
-    display:none;
     position:absolute;
     inset:0;
-    background:rgba(255,255,255,0.94);
-    z-index:200;
+    background:rgba(255,255,255,0.95);
+    display:none;
+    flex-direction:column;
     justify-content:center;
     align-items:center;
-    flex-direction:column;
-    text-align:center;
+    z-index:500;
     overflow:hidden;
 }
 
@@ -156,42 +165,50 @@ canvas{
     font-size:clamp(34px,5vw,60px);
     color:#ff6b6b;
     margin-bottom:20px;
+    z-index:10;
 }
 
 #finishScreen p{
     font-size:clamp(22px,3vw,34px);
     color:#333;
     margin-bottom:30px;
+    z-index:10;
 }
 
-/* PLAY AGAIN BUTTON */
+/* ======================
+   PLAY AGAIN BUTTON
+====================== */
 
 #playAgainBtn{
-    padding:16px 28px;
-    border:none;
-    border-radius:18px;
-    background:#ffb703;
-    color:#333;
+    padding:16px 30px;
     font-size:24px;
     font-weight:bold;
+    border:none;
+    border-radius:20px;
+    background:#ffb703;
+    color:#333;
     cursor:pointer;
-    box-shadow:0 6px 10px rgba(0,0,0,0.2);
+    z-index:1000;
+    position:relative;
+    box-shadow:0 6px 12px rgba(0,0,0,0.2);
 }
 
-/* CONFETTI */
+/* ======================
+   CONFETTI
+====================== */
 
 .confetti{
     position:absolute;
-    width:12px;
-    height:12px;
-    opacity:0.9;
+    width:14px;
+    height:14px;
     top:-20px;
+    opacity:0.9;
     animation:fall linear forwards;
 }
 
 @keyframes fall{
     to{
-        transform:translateY(110vh) rotate(720deg);
+        transform:translateY(120vh) rotate(720deg);
     }
 }
 
@@ -205,7 +222,7 @@ canvas{
     <!-- LOGO SCREEN -->
 
     <div id="logoScreen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+        <img src="assets/innovine-logo.png" alt="Logo">
     </div>
 
     <!-- GAME SCREEN -->
@@ -236,7 +253,9 @@ canvas{
 
         <p>You completed all the rounds!</p>
 
-        <button id="playAgainBtn">Play Again</button>
+        <button id="playAgainBtn">
+            Play Again
+        </button>
 
     </div>
 
@@ -259,25 +278,25 @@ const rounds = [
 {
     image:'assets/downboy.png',
     question:'Circle the child who is down.',
-    correctArea:{x:0.50,y:0.70,r:0.28}
+    correctArea:{x:0.50,y:0.70,r:0.30}
 },
 
 {
     image:'assets/upgirl.png',
     question:'Circle the girl who is up.',
-    correctArea:{x:0.55,y:0.28,r:0.28}
+    correctArea:{x:0.55,y:0.28,r:0.30}
 },
 
 {
     image:'assets/upboy.png',
     question:'Circle the boy who is up.',
-    correctArea:{x:0.45,y:0.28,r:0.28}
+    correctArea:{x:0.45,y:0.28,r:0.30}
 },
 
 {
     image:'assets/downgirl.png',
     question:'Circle the girl who is down.',
-    correctArea:{x:0.52,y:0.72,r:0.28}
+    correctArea:{x:0.52,y:0.72,r:0.30}
 }
 
 ];
@@ -288,24 +307,39 @@ const rounds = [
 
 let currentRound = 0;
 
-const logoScreen = document.getElementById('logoScreen');
-const gameScreen = document.getElementById('gameScreen');
+const logoScreen =
+document.getElementById('logoScreen');
 
-const questionBox = document.getElementById('questionBox');
-const slideImage = document.getElementById('slideImage');
+const gameScreen =
+document.getElementById('gameScreen');
 
-const speakBtn = document.getElementById('speakBtn');
+const finishScreen =
+document.getElementById('finishScreen');
 
-const nextMessage = document.getElementById('nextMessage');
+const questionBox =
+document.getElementById('questionBox');
 
-const finishScreen = document.getElementById('finishScreen');
+const slideImage =
+document.getElementById('slideImage');
 
-const playAgainBtn = document.getElementById('playAgainBtn');
+const speakBtn =
+document.getElementById('speakBtn');
 
-const rightSound = document.getElementById('rightSound');
-const wrongSound = document.getElementById('wrongSound');
+const nextMessage =
+document.getElementById('nextMessage');
 
-const canvas = document.getElementById('drawCanvas');
+const playAgainBtn =
+document.getElementById('playAgainBtn');
+
+const rightSound =
+document.getElementById('rightSound');
+
+const wrongSound =
+document.getElementById('wrongSound');
+
+const canvas =
+document.getElementById('drawCanvas');
+
 const ctx = canvas.getContext('2d');
 
 let drawing = false;
@@ -319,15 +353,19 @@ let points = [];
 function resizeCanvas(){
 
     canvas.width = window.innerWidth;
+
     canvas.height = window.innerHeight;
 }
 
 resizeCanvas();
 
-window.addEventListener('resize', resizeCanvas);
+window.addEventListener(
+    'resize',
+    resizeCanvas
+);
 
 /* =========================
-   START GAME AFTER LOGO
+   SHOW LOGO
 ========================= */
 
 setTimeout(()=>{
@@ -367,7 +405,8 @@ function speakQuestion(text){
 
         speechSynthesis.cancel();
 
-        const speech = new SpeechSynthesisUtterance(text);
+        const speech =
+        new SpeechSynthesisUtterance(text);
 
         speech.rate = 0.85;
 
@@ -375,13 +414,15 @@ function speakQuestion(text){
 
         speech.volume = 1;
 
-        window.speechSynthesis.speak(speech);
+        speechSynthesis.speak(speech);
     }
 }
 
 speakBtn.addEventListener('click',()=>{
 
-    speakQuestion(rounds[currentRound].question);
+    speakQuestion(
+        rounds[currentRound].question
+    );
 
 });
 
@@ -391,7 +432,12 @@ speakBtn.addEventListener('click',()=>{
 
 function clearCanvas(){
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
     points = [];
 }
@@ -437,7 +483,7 @@ function draw(e){
 
     ctx.lineCap = 'round';
 
-    ctx.strokeStyle = '#32c94d';
+    ctx.strokeStyle = '#2fb344';
 
     ctx.lineTo(pos.x,pos.y);
 
@@ -457,17 +503,37 @@ function endDraw(){
    EVENTS
 ========================= */
 
-canvas.addEventListener('mousedown',startDraw);
+canvas.addEventListener(
+    'mousedown',
+    startDraw
+);
 
-canvas.addEventListener('mousemove',draw);
+canvas.addEventListener(
+    'mousemove',
+    draw
+);
 
-canvas.addEventListener('mouseup',endDraw);
+canvas.addEventListener(
+    'mouseup',
+    endDraw
+);
 
-canvas.addEventListener('touchstart',startDraw,{passive:false});
+canvas.addEventListener(
+    'touchstart',
+    startDraw,
+    {passive:false}
+);
 
-canvas.addEventListener('touchmove',draw,{passive:false});
+canvas.addEventListener(
+    'touchmove',
+    draw,
+    {passive:false}
+);
 
-canvas.addEventListener('touchend',endDraw);
+canvas.addEventListener(
+    'touchend',
+    endDraw
+);
 
 /* =========================
    CHECK ANSWER
@@ -477,27 +543,29 @@ function checkAnswer(){
 
     const round = rounds[currentRound];
 
-    const imgRect = slideImage.getBoundingClientRect();
+    const imgRect =
+    slideImage.getBoundingClientRect();
 
     let hitCount = 0;
 
-    /* 
-       CHILDREN WILL DRAW ANY SHAPE.
-       THIS CHECKS IF MANY DRAW POINTS
-       TOUCH THE CORRECT PERSON AREA.
-    */
-
     for(let p of points){
 
-        const relX = (p.x - imgRect.left) / imgRect.width;
+        const relX =
+        (p.x - imgRect.left) /
+        imgRect.width;
 
-        const relY = (p.y - imgRect.top) / imgRect.height;
+        const relY =
+        (p.y - imgRect.top) /
+        imgRect.height;
 
-        const dx = relX - round.correctArea.x;
+        const dx =
+        relX - round.correctArea.x;
 
-        const dy = relY - round.correctArea.y;
+        const dy =
+        relY - round.correctArea.y;
 
-        const distance = Math.sqrt(dx*dx + dy*dy);
+        const distance =
+        Math.sqrt(dx*dx + dy*dy);
 
         if(distance < round.correctArea.r){
 
@@ -505,9 +573,9 @@ function checkAnswer(){
         }
     }
 
-    /* ACCEPT IF ENOUGH POINTS TOUCH */
+    /* CHILD CAN DRAW ANY SHAPE */
 
-    if(hitCount > 8){
+    if(hitCount > 5){
 
         rightSound.currentTime = 0;
 
@@ -523,7 +591,7 @@ function checkAnswer(){
 
             if(currentRound >= rounds.length){
 
-                endGame();
+                showFinishScreen();
 
             }else{
 
@@ -547,10 +615,10 @@ function checkAnswer(){
 }
 
 /* =========================
-   END GAME
+   SHOW FINISH SCREEN
 ========================= */
 
-function endGame(){
+function showFinishScreen(){
 
     gameScreen.style.display='none';
 
@@ -574,29 +642,27 @@ function createConfetti(){
         '#ff924c'
     ];
 
-    for(let i=0; i<120; i++){
+    for(let i=0; i<150; i++){
 
-        const confetti = document.createElement('div');
+        const confetti =
+        document.createElement('div');
 
         confetti.classList.add('confetti');
 
-        confetti.style.left = Math.random()*100 + 'vw';
+        confetti.style.left =
+        Math.random()*100 + 'vw';
 
-        confetti.style.background = colors[Math.floor(Math.random()*colors.length)];
+        confetti.style.background =
+        colors[
+            Math.floor(
+                Math.random()*colors.length
+            )
+        ];
 
         confetti.style.animationDuration =
-            (Math.random()*3 + 3) + 's';
-
-        confetti.style.opacity = Math.random();
-
-        confetti.style.transform =
-            `rotate(${Math.random()*360}deg)`;
+        (Math.random()*3 + 3) + 's';
 
         finishScreen.appendChild(confetti);
-
-        setTimeout(()=>{
-            confetti.remove();
-        },7000);
     }
 }
 
@@ -606,15 +672,22 @@ function createConfetti(){
 
 playAgainBtn.addEventListener('click',()=>{
 
+    /* REMOVE CONFETTI */
+
+    const allConfetti =
+    document.querySelectorAll('.confetti');
+
+    allConfetti.forEach(c=>c.remove());
+
+    /* RESET GAME */
+
     currentRound = 0;
+
+    clearCanvas();
 
     finishScreen.style.display='none';
 
     gameScreen.style.display='block';
-
-    /* REMOVE OLD CONFETTI */
-
-    document.querySelectorAll('.confetti').forEach(c=>c.remove());
 
     loadRound();
 });
