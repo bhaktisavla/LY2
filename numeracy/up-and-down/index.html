@@ -17,6 +17,7 @@ user-scalable=no">
     margin:0;
     padding:0;
     box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
     touch-action:none;
 }
 
@@ -84,7 +85,7 @@ body{
     background:rgba(255,255,255,0.95);
     padding:12px 18px;
     border-radius:18px;
-    font-size:clamp(18px,2.5vw,32px);
+    font-size:clamp(18px,2.5vw,30px);
     font-weight:bold;
     color:#333;
     text-align:center;
@@ -109,16 +110,17 @@ body{
 #slideImage{
     position:absolute;
     left:50%;
-    top:54%;
+    top:55%;
     transform:translate(-50%,-50%);
+    width:auto;
     max-width:92vw;
-    max-height:78vh;
+    max-height:75vh;
     object-fit:contain;
     border-radius:20px;
 }
 
 /* =========================
-   DRAWING
+   CANVAS
 ========================= */
 
 canvas{
@@ -128,7 +130,7 @@ canvas{
 }
 
 /* =========================
-   SUCCESS MESSAGE
+   MESSAGE
 ========================= */
 
 #nextMessage{
@@ -181,7 +183,6 @@ canvas{
     border-radius:20px;
     background:#ffb703;
     cursor:pointer;
-    box-shadow:0 6px 12px rgba(0,0,0,0.2);
     z-index:1000;
 }
 
@@ -275,10 +276,10 @@ const rounds = [
     question:'Circle the child who is down.',
 
     correct:{
-        x:0.50,
-        y:0.72,
-        width:0.42,
-        height:0.42
+        x1:0.28,
+        x2:0.72,
+        y1:0.54,
+        y2:0.96
     }
 },
 
@@ -287,10 +288,10 @@ const rounds = [
     question:'Circle the child who is up.',
 
     correct:{
-        x:0.56,
-        y:0.28,
-        width:0.42,
-        height:0.42
+        x1:0.34,
+        x2:0.78,
+        y1:0.02,
+        y2:0.46
     }
 },
 
@@ -299,10 +300,10 @@ const rounds = [
     question:'Circle the child who is up.',
 
     correct:{
-        x:0.44,
-        y:0.28,
-        width:0.42,
-        height:0.42
+        x1:0.18,
+        x2:0.62,
+        y1:0.02,
+        y2:0.46
     }
 },
 
@@ -311,10 +312,10 @@ const rounds = [
     question:'Circle the child who is down.',
 
     correct:{
-        x:0.52,
-        y:0.72,
-        width:0.42,
-        height:0.42
+        x1:0.28,
+        x2:0.74,
+        y1:0.54,
+        y2:0.96
     }
 }
 
@@ -367,27 +368,25 @@ let drawing = false;
 let points = [];
 
 /* ====================================
-   CANVAS SIZE
+   CANVAS
 ==================================== */
 
 function resizeCanvas(){
 
-    canvas.width =
-    window.innerWidth;
+    canvas.width = window.innerWidth;
 
-    canvas.height =
-    window.innerHeight;
+    canvas.height = window.innerHeight;
 }
 
 resizeCanvas();
 
 window.addEventListener(
-    'resize',
-    resizeCanvas
+'resize',
+resizeCanvas
 );
 
 /* ====================================
-   START GAME
+   START
 ==================================== */
 
 setTimeout(()=>{
@@ -419,7 +418,7 @@ function loadRound(){
 }
 
 /* ====================================
-   VOICE
+   SPEECH
 ==================================== */
 
 function speakQuestion(text){
@@ -448,23 +447,23 @@ speakBtn.addEventListener('click',()=>{
 });
 
 /* ====================================
-   CLEAR DRAWING
+   CLEAR
 ==================================== */
 
 function clearCanvas(){
 
     ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
+    0,
+    0,
+    canvas.width,
+    canvas.height
     );
 
     points = [];
 }
 
 /* ====================================
-   GET POSITION
+   POSITION
 ==================================== */
 
 function getPos(e){
@@ -484,7 +483,7 @@ function getPos(e){
 }
 
 /* ====================================
-   START DRAW
+   DRAW
 ==================================== */
 
 function startDraw(e){
@@ -501,10 +500,6 @@ function startDraw(e){
 
     ctx.moveTo(pos.x,pos.y);
 }
-
-/* ====================================
-   DRAW
-==================================== */
 
 function draw(e){
 
@@ -524,10 +519,6 @@ function draw(e){
 
     ctx.stroke();
 }
-
-/* ====================================
-   END DRAW
-==================================== */
 
 function endDraw(){
 
@@ -575,7 +566,7 @@ endDraw
 );
 
 /* ====================================
-   CHECK ANSWER
+   FIXED ANSWER CHECK
 ==================================== */
 
 function checkAnswer(){
@@ -585,7 +576,7 @@ function checkAnswer(){
     const imgRect =
     slideImage.getBoundingClientRect();
 
-    let correctPoints = 0;
+    let hit = false;
 
     for(let p of points){
 
@@ -597,34 +588,24 @@ function checkAnswer(){
         (p.y - imgRect.top) /
         imgRect.height;
 
-        const area = round.correct;
+        if(
+            relX >= round.correct.x1 &&
+            relX <= round.correct.x2 &&
+            relY >= round.correct.y1 &&
+            relY <= round.correct.y2
+        ){
 
-        const insideX =
-        relX >
-        (area.x - area.width/2)
-        &&
-        relX <
-        (area.x + area.width/2);
-
-        const insideY =
-        relY >
-        (area.y - area.height/2)
-        &&
-        relY <
-        (area.y + area.height/2);
-
-        if(insideX && insideY){
-
-            correctPoints++;
+            hit = true;
+            break;
         }
     }
 
-    /* 
-       PRESCHOOL FRIENDLY
-       EASY TO ACCEPT
-    */
+    /* =========================
+       ONLY ACCEPT IF TOUCHING
+       CORRECT CHILD AREA
+    ========================= */
 
-    if(correctPoints >= 1){
+    if(hit){
 
         rightSound.currentTime = 0;
 
@@ -704,7 +685,7 @@ function createConfetti(){
         confetti.style.background =
         colors[
             Math.floor(
-                Math.random()*colors.length
+            Math.random()*colors.length
             )
         ];
 
