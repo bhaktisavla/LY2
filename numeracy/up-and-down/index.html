@@ -118,7 +118,7 @@ body{
 }
 
 /* =========================
-   DRAWING CANVAS
+   DRAWING
 ========================= */
 
 canvas{
@@ -277,8 +277,8 @@ const rounds = [
     correct:{
         x:0.50,
         y:0.72,
-        width:0.26,
-        height:0.26
+        width:0.42,
+        height:0.42
     }
 },
 
@@ -288,9 +288,9 @@ const rounds = [
 
     correct:{
         x:0.56,
-        y:0.27,
-        width:0.26,
-        height:0.26
+        y:0.28,
+        width:0.42,
+        height:0.42
     }
 },
 
@@ -300,9 +300,9 @@ const rounds = [
 
     correct:{
         x:0.44,
-        y:0.27,
-        width:0.26,
-        height:0.26
+        y:0.28,
+        width:0.42,
+        height:0.42
     }
 },
 
@@ -313,8 +313,8 @@ const rounds = [
     correct:{
         x:0.52,
         y:0.72,
-        width:0.26,
-        height:0.26
+        width:0.42,
+        height:0.42
     }
 }
 
@@ -619,13 +619,12 @@ function checkAnswer(){
         }
     }
 
-    /* ====================================
-       THIS IS THE FIX
-       ONLY ACCEPT IF MANY DRAW POINTS
-       TOUCH THE CORRECT CHILD
-    ==================================== */
+    /* 
+       PRESCHOOL FRIENDLY
+       EASY TO ACCEPT
+    */
 
-    if(correctPoints >= 5){
+    if(correctPoints >= 1){
 
         rightSound.currentTime = 0;
 
