@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
 <title>Full and Empty Game</title>
 
 <style>
@@ -17,14 +18,14 @@
 body{
     font-family:Arial, sans-serif;
     overflow:hidden;
-    background:#FFF6E9;
+    background:#FFF7EC;
 }
 
 #game{
     width:100vw;
     height:100vh;
-    position:relative;
     overflow:hidden;
+    position:relative;
 }
 
 /* SCREENS */
@@ -48,7 +49,7 @@ body{
 #logoScreen{
     justify-content:center;
     align-items:center;
-    background:#FFF2D7;
+    background:#FFF1D7;
 }
 
 #logoScreen img{
@@ -63,7 +64,7 @@ body{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:8px;
+    margin-bottom:10px;
 }
 
 .round{
@@ -92,7 +93,7 @@ body{
     font-weight:bold;
     color:#5A4331;
     text-align:center;
-    margin-bottom:12px;
+    margin-bottom:10px;
     line-height:1.3;
 }
 
@@ -102,9 +103,9 @@ body{
     width:100%;
     flex:1;
     display:grid;
-    gap:12px;
-    align-items:center;
+    gap:10px;
     justify-items:center;
+    align-items:center;
 }
 
 .grid.two{
@@ -124,7 +125,7 @@ body{
 
 .card img{
     width:100%;
-    height:150px;
+    height:140px;
     object-fit:contain;
 }
 
@@ -144,7 +145,7 @@ body{
     width:100%;
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:8px;
+    gap:6px;
     margin-bottom:10px;
 }
 
@@ -157,7 +158,7 @@ body{
 
 .dragItem img{
     width:100%;
-    height:55px;
+    height:50px;
     object-fit:contain;
 }
 
@@ -175,22 +176,21 @@ body{
     border:4px dashed #C7AF88;
     border-radius:20px;
     padding:8px;
-    text-align:center;
-    min-height:170px;
+    min-height:150px;
     display:flex;
     flex-direction:column;
     align-items:center;
 }
 
 .dropZone img{
-    width:70px;
-    margin-bottom:6px;
+    width:60px;
+    margin-bottom:5px;
 }
 
 .dropZone h2{
     color:#5A4331;
-    margin-bottom:6px;
-    font-size:22px;
+    font-size:20px;
+    margin-bottom:5px;
 }
 
 .dropItems{
@@ -205,11 +205,11 @@ body{
 #finishScreen{
     justify-content:center;
     align-items:center;
-    background:#FFF1D6;
+    background:#FFF2D8;
 }
 
 #finishScreen h1{
-    font-size:40px;
+    font-size:42px;
     color:#5A4331;
     margin-bottom:20px;
 }
@@ -252,23 +252,23 @@ body{
     }
 
     .card img{
-        height:95px;
+        height:90px;
     }
 
     .dragContainer{
-        gap:5px;
+        gap:4px;
     }
 
     .dragItem img{
-        height:42px;
+        height:38px;
     }
 
     .dropZone{
-        min-height:120px;
+        min-height:110px;
     }
 
     .dropZone img{
-        width:50px;
+        width:45px;
     }
 
     .dropZone h2{
@@ -295,11 +295,15 @@ body{
 <div class="screen" id="round1">
 
     <div class="topBar">
-        <div class="round">Round 1</div>
+
+        <div class="round">
+            Round 1
+        </div>
 
         <button class="speakerBtn" onclick="speak(round1Voice)">
             🔊
         </button>
+
     </div>
 
     <div class="question">
@@ -307,10 +311,6 @@ body{
     </div>
 
     <div class="grid two">
-
-        <div class="card r1" data-correct="true">
-            <img src="assets/fullvessel.png">
-        </div>
 
         <div class="card r1" data-correct="false">
             <img src="assets/emptyvessel.png">
@@ -324,6 +324,10 @@ body{
             <img src="assets/emptybin.png">
         </div>
 
+        <div class="card r1" data-correct="true">
+            <img src="assets/fullvessel.png">
+        </div>
+
     </div>
 
 </div>
@@ -333,11 +337,15 @@ body{
 <div class="screen" id="round2">
 
     <div class="topBar">
-        <div class="round">Round 2</div>
+
+        <div class="round">
+            Round 2
+        </div>
 
         <button class="speakerBtn" onclick="speak(round2Voice)">
             🔊
         </button>
+
     </div>
 
     <div class="question">
@@ -379,18 +387,22 @@ body{
 <div class="screen" id="round3">
 
     <div class="topBar">
-        <div class="round">Round 3</div>
+
+        <div class="round">
+            Round 3
+        </div>
 
         <button class="speakerBtn" onclick="speak(round3Voice)">
             🔊
         </button>
+
     </div>
 
     <div class="question">
         Drag EMPTY objects to EMPTY and FULL objects to FULL.
     </div>
 
-    <div class="dragContainer" id="dragContainer">
+    <div class="dragContainer">
 
         <div class="dragItem" draggable="true" data-type="empty">
             <img src="assets/basketempty.png">
@@ -492,7 +504,7 @@ document.getElementById("correctSound");
 const wrongSound =
 document.getElementById("wrongSound");
 
-/* START */
+/* START GAME */
 
 setTimeout(()=>{
 
@@ -514,7 +526,7 @@ function speak(text){
 
         speechSynthesis.cancel();
 
-        let speech =
+        const speech =
         new SpeechSynthesisUtterance(text);
 
         speech.rate = 0.9;
@@ -701,6 +713,8 @@ function finishGame(){
 
     createConfetti();
 }
+
+/* CONFETTI */
 
 function createConfetti(){
 
