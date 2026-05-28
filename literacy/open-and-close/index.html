@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 <title>Open and Close Game</title>
 
 <style>
+
 *{
     margin:0;
     padding:0;
@@ -14,20 +16,50 @@
 }
 
 body{
-    font-family: Arial, sans-serif;
     overflow:hidden;
-    background:#f4f9ff;
+    font-family:Arial, sans-serif;
+    background:#dff6ff;
 }
 
+/* MAIN GAME */
 #gameContainer{
     width:100vw;
     height:100vh;
-    background:url('assets/background.jpg') center center/cover no-repeat;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:flex-start;
     position:relative;
+    overflow:hidden;
+
+    background:
+    linear-gradient(
+    180deg,
+    #b8ecff 0%,
+    #d9f7ff 35%,
+    #fff4c2 100%);
+}
+
+/* DECORATIVE CIRCLES */
+#gameContainer::before,
+#gameContainer::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    opacity:0.28;
+    z-index:0;
+}
+
+#gameContainer::before{
+    width:320px;
+    height:320px;
+    background:#ffb3c7;
+    top:-90px;
+    left:-90px;
+}
+
+#gameContainer::after{
+    width:260px;
+    height:260px;
+    background:#ffe08a;
+    bottom:-70px;
+    right:-70px;
 }
 
 /* LOGO SCREEN */
@@ -36,52 +68,61 @@ body{
     inset:0;
     background:white;
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
     z-index:100;
 }
 
 #logoScreen img{
-    width:min(300px,70vw);
+    width:min(320px,70vw);
 }
 
 /* HEADER */
 .header{
     width:100%;
     text-align:center;
-    padding:10px 5px 5px;
+    padding:8px 5px 2px;
+    position:relative;
+    z-index:2;
 }
 
 .header h1{
-    font-size:clamp(28px,5vw,48px);
-    color:#ff6b6b;
+    font-size:clamp(30px,5vw,48px);
+    color:#ff5d73;
     text-shadow:2px 2px white;
 }
 
 .instruction{
+    margin-top:4px;
     font-size:clamp(16px,2.5vw,24px);
-    margin-top:5px;
     font-weight:bold;
     color:#4b4bff;
 }
 
-/* QUESTION */
+/* QUESTION BOX */
 #questionBox{
     width:95%;
     max-width:1000px;
-    margin-top:5px;
-    background:rgba(255,255,255,0.88);
-    border-radius:20px;
+    margin:5px auto 0;
     padding:10px;
+
+    background:rgba(255,255,255,0.9);
+
+    border-radius:22px;
+
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
     gap:12px;
+
     box-shadow:0 4px 10px rgba(0,0,0,0.15);
+
+    position:relative;
+    z-index:2;
 }
 
 #questionText{
-    font-size:clamp(20px,3vw,36px);
+    font-size:clamp(22px,3vw,38px);
     font-weight:bold;
     text-align:center;
 }
@@ -107,37 +148,53 @@ body{
     font-size:clamp(16px,2vw,24px);
     font-weight:bold;
     color:#5b3a29;
+    position:relative;
+    z-index:2;
+    text-align:center;
 }
 
 /* OPTIONS */
 #options{
-    flex:1;
     width:100%;
+    flex:1;
+
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:20px;
+
+    gap:18px;
+
     padding:10px;
+
+    position:relative;
+    z-index:2;
 }
 
 .option{
-    width:44%;
+    width:45%;
     max-width:420px;
-    height:60vh;
+    height:58vh;
+
     background:rgba(255,255,255,0.92);
+
     border-radius:24px;
+
     display:flex;
-    align-items:center;
     justify-content:center;
-    position:relative;
+    align-items:center;
+
     border:5px solid transparent;
+
     transition:0.25s;
+
     cursor:pointer;
+
+    position:relative;
 }
 
 .option img{
-    width:95%;
-    height:95%;
+    width:96%;
+    height:96%;
     object-fit:contain;
 }
 
@@ -160,29 +217,42 @@ body{
 /* FEEDBACK */
 #feedback{
     position:absolute;
-    top:50%;
+    top:45%;
     left:50%;
     transform:translate(-50%,-50%);
     font-size:clamp(40px,7vw,90px);
     font-weight:bold;
     color:#2ecc71;
+    text-shadow:2px 2px white;
     display:none;
     z-index:20;
-    text-shadow:2px 2px white;
+    text-align:center;
 }
 
 /* PLAY AGAIN */
 #playAgain{
+    position:absolute;
+    bottom:40px;
+    left:50%;
+    transform:translateX(-50%);
+
     display:none;
-    margin-bottom:20px;
-    padding:14px 28px;
+
+    padding:16px 34px;
+
     border:none;
-    border-radius:16px;
-    font-size:24px;
+    border-radius:18px;
+
     background:#ffb703;
-    color:#fff;
+
+    color:white;
+
+    font-size:clamp(22px,3vw,30px);
     font-weight:bold;
+
     cursor:pointer;
+
+    z-index:25;
 }
 
 /* CONFETTI */
@@ -190,12 +260,12 @@ body{
     position:absolute;
     width:12px;
     height:12px;
-    background:red;
     top:-20px;
     animation:fall linear forwards;
 }
 
 /* ANIMATIONS */
+
 @keyframes shake{
     0%{transform:translateX(0);}
     25%{transform:translateX(-8px);}
@@ -204,16 +274,16 @@ body{
     100%{transform:translateX(0);}
 }
 
-@keyframes pop{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.05);}
-    100%{transform:scale(1);}
-}
-
 @keyframes glow{
     0%{box-shadow:0 0 5px #2ecc71;}
     50%{box-shadow:0 0 25px #2ecc71;}
     100%{box-shadow:0 0 5px #2ecc71;}
+}
+
+@keyframes pop{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+    100%{transform:scale(1);}
 }
 
 @keyframes fall{
@@ -254,14 +324,15 @@ body{
 
 <div id="gameContainer">
 
-    <!-- LOGO SCREEN -->
+    <!-- LOGO -->
     <div id="logoScreen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+        <img src="assets/innovine-logo.png" alt="Logo">
     </div>
 
     <!-- HEADER -->
     <div class="header">
         <h1>Open and Close</h1>
+
         <div class="instruction">
             Listen and click to the correct picture.
         </div>
@@ -269,8 +340,13 @@ body{
 
     <!-- QUESTION -->
     <div id="questionBox">
+
         <div id="questionText"></div>
-        <button id="speakBtn">🔊</button>
+
+        <button id="speakBtn">
+            🔊
+        </button>
+
     </div>
 
     <!-- ROUND -->
@@ -278,6 +354,7 @@ body{
 
     <!-- OPTIONS -->
     <div id="options">
+
         <div class="option" id="option1">
             <img id="img1" src="">
         </div>
@@ -285,13 +362,16 @@ body{
         <div class="option" id="option2">
             <img id="img2" src="">
         </div>
+
     </div>
 
     <!-- FEEDBACK -->
-    <div id="feedback">✔ Good Job!</div>
+    <div id="feedback"></div>
 
     <!-- PLAY AGAIN -->
-    <button id="playAgain">Play Again</button>
+    <button id="playAgain">
+        Play Again
+    </button>
 
 </div>
 
@@ -301,61 +381,87 @@ body{
 
 <script>
 
+/* QUESTIONS */
+
 const rounds = [
 
 {
 question:"Click the open box.",
 voice:"Click the open box.",
-images:["assets/openbox.png","assets/closebox.png"],
+images:[
+"assets/openbox.png",
+"assets/closebox.png"
+],
 correct:0
 },
 
 {
 question:"Click the closed door.",
 voice:"Click the closed door.",
-images:["assets/opendoor.png","assets/closedoor.png"],
+images:[
+"assets/opendoor.png",
+"assets/closedoor.png"
+],
 correct:1
 },
 
 {
 question:"Click the open umbrella.",
 voice:"Click the open umbrella.",
-images:["assets/openumbrella.png","assets/closeumbrella.png"],
+images:[
+"assets/openumbrella.png",
+"assets/closeumbrella.png"
+],
 correct:0
 },
 
 {
 question:"Click the open book.",
 voice:"Click the open book.",
-images:["assets/openbook.png","assets/closebook.png"],
+images:[
+"assets/openbook.png",
+"assets/closebook.png"
+],
 correct:0
 },
 
 {
 question:"Click the closed window.",
 voice:"Click the closed window.",
-images:["assets/openwindow.png","assets/closewindow.png"],
+images:[
+"assets/openwindow.png",
+"assets/closewindow.png"
+],
 correct:1
 },
 
 {
 question:"Click the closed lid.",
 voice:"Click the closed lid.",
-images:["assets/openlid.png","assets/closelid.png"],
+images:[
+"assets/openlid.png",
+"assets/closelid.png"
+],
 correct:1
 },
 
 {
 question:"Click the open chest.",
 voice:"Click the open chest.",
-images:["assets/openchest.png","assets/closechest.png"],
+images:[
+"assets/openchest.png",
+"assets/closechest.png"
+],
 correct:0
 },
 
 {
 question:"Click the closed cupboard.",
 voice:"Click the closed cupboard.",
-images:["assets/opencupboard.png","assets/closecupboard.png"],
+images:[
+"assets/opencupboard.png",
+"assets/closecupboard.png"
+],
 correct:1
 }
 
@@ -365,22 +471,39 @@ let currentRound = 0;
 let wrongAttempts = 0;
 
 const questionText = document.getElementById("questionText");
+
 const img1 = document.getElementById("img1");
 const img2 = document.getElementById("img2");
+
 const option1 = document.getElementById("option1");
 const option2 = document.getElementById("option2");
+
 const feedback = document.getElementById("feedback");
+
 const roundText = document.getElementById("round");
+
 const playAgainBtn = document.getElementById("playAgain");
 
 const rightSound = document.getElementById("rightSound");
 const wrongSound = document.getElementById("wrongSound");
 
-const colors = ["color1","color2","color3","color4"];
+const colors = [
+"color1",
+"color2",
+"color3",
+"color4"
+];
+
+/* RANDOM QUESTION COLOR */
 
 function randomColorClass(){
-    return colors[Math.floor(Math.random()*colors.length)];
+
+    return colors[
+    Math.floor(Math.random()*colors.length)
+    ];
 }
+
+/* LOAD ROUND */
 
 function loadRound(){
 
@@ -392,23 +515,31 @@ function loadRound(){
     const round = rounds[currentRound];
 
     questionText.className = "";
-    questionText.classList.add(randomColorClass());
 
-    questionText.textContent = round.question;
+    questionText.classList.add(
+    randomColorClass()
+    );
+
+    questionText.textContent =
+    round.question;
 
     img1.src = round.images[0];
     img2.src = round.images[1];
 
-    roundText.textContent = `Round ${currentRound+1} / 8`;
+    roundText.textContent =
+    `Round ${currentRound+1} / 8`;
 
     speak(round.voice);
 }
+
+/* SPEECH */
 
 function speak(text){
 
     speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance =
+    new SpeechSynthesisUtterance(text);
 
     utterance.rate = 0.9;
     utterance.pitch = 1;
@@ -417,31 +548,39 @@ function speak(text){
     speechSynthesis.speak(utterance);
 }
 
-document.getElementById("speakBtn").addEventListener("click", ()=>{
+/* SPEAK AGAIN BUTTON */
+
+document.getElementById("speakBtn")
+.addEventListener("click", ()=>{
 
     speak(rounds[currentRound].voice);
 
 });
 
+/* HANDLE ANSWER */
+
 function handleAnswer(selected){
 
-    const correct = rounds[currentRound].correct;
+    const correct =
+    rounds[currentRound].correct;
 
     if(selected === correct){
 
+        rightSound.currentTime = 0;
         rightSound.play();
 
-        if(navigator.vibrate){
-            navigator.vibrate(100);
-        }
+        if(correct === 0){
 
-        if(correct===0){
             option1.classList.add("correct");
+
         }else{
+
             option2.classList.add("correct");
         }
 
         feedback.style.display = "block";
+
+        feedback.innerHTML = "✔ Good Job!";
 
         setTimeout(()=>{
 
@@ -453,20 +592,25 @@ function handleAnswer(selected){
             currentRound++;
 
             if(currentRound < rounds.length){
+
                 loadRound();
+
             }else{
+
                 endGame();
             }
 
-        },1800);
+        },1700);
 
     }else{
 
+        wrongSound.currentTime = 0;
         wrongSound.play();
 
         wrongAttempts++;
 
         if(selected===0){
+
             option1.classList.add("wrong");
 
             setTimeout(()=>{
@@ -482,42 +626,86 @@ function handleAnswer(selected){
             },400);
         }
 
-        if(wrongAttempts >=2){
+        /* GLOW AFTER 2 WRONG ATTEMPTS */
+
+        if(wrongAttempts >= 2){
 
             if(correct===0){
+
                 option1.classList.add("glow");
+
             }else{
+
                 option2.classList.add("glow");
             }
         }
     }
 }
 
-option1.addEventListener("click", ()=>handleAnswer(0));
-option2.addEventListener("click", ()=>handleAnswer(1));
+/* CLICK EVENTS */
+
+option1.addEventListener(
+"click",
+()=>handleAnswer(0)
+);
+
+option2.addEventListener(
+"click",
+()=>handleAnswer(1)
+);
+
+/* END GAME */
 
 function endGame(){
 
-    questionText.textContent = "Wonderful Job!";
-    roundText.textContent = "";
+    /* HIDE HEADER */
+    document.querySelector(".header")
+    .style.display = "none";
 
-    document.getElementById("options").style.display = "none";
+    document.getElementById("questionBox")
+    .style.display = "none";
 
+    roundText.style.display = "none";
+
+    /* HIDE OPTIONS */
+    document.getElementById("options")
+    .style.display = "none";
+
+    /* SHOW FEEDBACK */
     feedback.style.display = "block";
-    feedback.innerHTML = "🎉 Amazing! 🎉";
+
+    feedback.innerHTML =
+    "🎉 Amazing! 🎉";
 
     createConfetti();
 
+    /* SHOW PLAY AGAIN */
     playAgainBtn.style.display = "block";
 
-    speak("Amazing! You completed the game!");
+    speak(
+    "Amazing! You completed the game!"
+    );
 }
 
-playAgainBtn.addEventListener("click", ()=>{
+/* PLAY AGAIN */
+
+playAgainBtn.addEventListener(
+"click",
+()=>{
 
     currentRound = 0;
 
-    document.getElementById("options").style.display = "flex";
+    /* SHOW AGAIN */
+    document.querySelector(".header")
+    .style.display = "block";
+
+    document.getElementById("questionBox")
+    .style.display = "flex";
+
+    roundText.style.display = "block";
+
+    document.getElementById("options")
+    .style.display = "flex";
 
     feedback.style.display = "none";
 
@@ -526,18 +714,23 @@ playAgainBtn.addEventListener("click", ()=>{
     loadRound();
 });
 
+/* CONFETTI */
+
 function createConfetti(){
 
     for(let i=0;i<120;i++){
 
-        const confetti = document.createElement("div");
+        const confetti =
+        document.createElement("div");
 
         confetti.classList.add("confetti");
 
-        confetti.style.left = Math.random()*100 + "vw";
+        confetti.style.left =
+        Math.random()*100 + "vw";
 
         confetti.style.background =
-        `hsl(${Math.random()*360}, 90%, 60%)`;
+        `hsl(${Math.random()*360},
+        90%,60%)`;
 
         confetti.style.animationDuration =
         (Math.random()*3 + 2) + "s";
@@ -555,9 +748,11 @@ function createConfetti(){
 }
 
 /* START GAME AFTER 5 SECONDS */
+
 setTimeout(()=>{
 
-    document.getElementById("logoScreen").style.display="none";
+    document.getElementById("logoScreen")
+    .style.display = "none";
 
     loadRound();
 
