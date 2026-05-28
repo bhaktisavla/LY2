@@ -1,289 +1,250 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Open and Close Game</title>
 
 <style>
-
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
--webkit-tap-highlight-color: transparent;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body{
-font-family:Arial, sans-serif;
-overflow:hidden;
-height:100vh;
-background:#fff5e8;
+    font-family: Arial, sans-serif;
+    overflow:hidden;
+    background:#f4f9ff;
 }
 
-/* BACKGROUND */
-
-body::before{
-content:"";
-position:fixed;
-inset:0;
-background:
-linear-gradient(rgba(255,255,255,0.85),rgba(255,255,255,0.85)),
-url("assets/background.jpg") center/cover no-repeat;
-z-index:-1;
+#gameContainer{
+    width:100vw;
+    height:100vh;
+    background:url('assets/background.jpg') center center/cover no-repeat;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    position:relative;
 }
 
-/* SPLASH SCREEN */
-
-#splash{
-position:fixed;
-inset:0;
-background:#fffaf3;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:9999;
+/* LOGO SCREEN */
+#logoScreen{
+    position:absolute;
+    inset:0;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
 }
 
-#splash img{
-width:min(300px,70vw);
-animation:logoPulse 1.5s infinite alternate;
-}
-
-@keyframes logoPulse{
-from{transform:scale(1);}
-to{transform:scale(1.06);}
-}
-
-/* MAIN GAME */
-
-#game{
-display:none;
-height:100vh;
-padding:10px;
-}
-
-.game-container{
-height:100%;
-width:100%;
-background:rgba(255,255,255,0.93);
-border-radius:25px;
-border:5px solid #ffd08a;
-display:flex;
-flex-direction:column;
-justify-content:space-between;
-align-items:center;
-padding:10px;
+#logoScreen img{
+    width:min(300px,70vw);
 }
 
 /* HEADER */
-
-h1{
-font-size:clamp(28px,4vw,48px);
-color:#ff7a59;
-margin-bottom:5px;
-text-align:center;
+.header{
+    width:100%;
+    text-align:center;
+    padding:10px 5px 5px;
 }
 
-/* INSTRUCTION */
+.header h1{
+    font-size:clamp(28px,5vw,48px);
+    color:#ff6b6b;
+    text-shadow:2px 2px white;
+}
 
 .instruction{
-font-size:clamp(16px,2vw,24px);
-font-weight:bold;
-color:#4b5563;
-text-align:center;
-margin-bottom:8px;
+    font-size:clamp(16px,2.5vw,24px);
+    margin-top:5px;
+    font-weight:bold;
+    color:#4b4bff;
 }
 
 /* QUESTION */
-
-.question-row{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:5px;
+#questionBox{
+    width:95%;
+    max-width:1000px;
+    margin-top:5px;
+    background:rgba(255,255,255,0.88);
+    border-radius:20px;
+    padding:10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.15);
 }
 
-#question{
-font-size:clamp(24px,3vw,38px);
-font-weight:bold;
-text-align:center;
-background:linear-gradient(90deg,#ff6b6b,#f59e0b,#10b981,#3b82f6,#8b5cf6);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+#questionText{
+    font-size:clamp(20px,3vw,36px);
+    font-weight:bold;
+    text-align:center;
 }
 
-.speak-btn{
-border:none;
-background:#ffd166;
-width:55px;
-height:55px;
-border-radius:50%;
-font-size:24px;
-cursor:pointer;
-box-shadow:0 4px 10px rgba(0,0,0,0.15);
+.color1{color:#ff4d6d;}
+.color2{color:#ff9800;}
+.color3{color:#00a86b;}
+.color4{color:#0077ff;}
+
+#speakBtn{
+    border:none;
+    background:#ffd166;
+    border-radius:50%;
+    width:55px;
+    height:55px;
+    font-size:26px;
+    cursor:pointer;
 }
 
-.speak-btn:active{
-transform:scale(0.95);
+/* ROUND */
+#round{
+    margin-top:5px;
+    font-size:clamp(16px,2vw,24px);
+    font-weight:bold;
+    color:#5b3a29;
 }
 
 /* OPTIONS */
-
-.options{
-flex:1;
-width:100%;
-display:flex;
-justify-content:center;
-align-items:center;
-gap:18px;
+#options{
+    flex:1;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    padding:10px;
 }
 
 .option{
-width:45%;
-height:100%;
-max-height:420px;
-background:#ffffff;
-border-radius:25px;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:10px;
-cursor:pointer;
-transition:0.2s;
-border:5px solid transparent;
-position:relative;
-overflow:hidden;
+    width:44%;
+    max-width:420px;
+    height:60vh;
+    background:rgba(255,255,255,0.92);
+    border-radius:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    border:5px solid transparent;
+    transition:0.25s;
+    cursor:pointer;
 }
 
 .option img{
-width:100%;
-height:100%;
-object-fit:contain;
-}
-
-.option:hover{
-transform:scale(1.02);
+    width:95%;
+    height:95%;
+    object-fit:contain;
 }
 
 /* CORRECT */
-
 .correct{
-border-color:#22c55e;
+    border-color:#2ecc71;
+    animation:pop 0.5s;
 }
 
 /* WRONG */
-
 .wrong{
-border-color:#ef4444;
-animation:shake 0.35s;
-}
-
-@keyframes shake{
-0%{transform:translateX(0);}
-25%{transform:translateX(-8px);}
-50%{transform:translateX(8px);}
-75%{transform:translateX(-8px);}
-100%{transform:translateX(0);}
+    animation:shake 0.35s;
 }
 
 /* GLOW */
-
 .glow{
-animation:glow 1s infinite;
-}
-
-@keyframes glow{
-0%{box-shadow:0 0 5px #22c55e;}
-50%{box-shadow:0 0 25px #22c55e;}
-100%{box-shadow:0 0 5px #22c55e;}
+    animation:glow 1s infinite;
 }
 
 /* FEEDBACK */
-
-.feedback{
-height:60px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:clamp(24px,3vw,38px);
-font-weight:bold;
-color:#16a34a;
+#feedback{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:clamp(40px,7vw,90px);
+    font-weight:bold;
+    color:#2ecc71;
+    display:none;
+    z-index:20;
+    text-shadow:2px 2px white;
 }
 
-.tick{
-font-size:50px;
-margin-right:10px;
-}
-
-/* END SCREEN */
-
-#endScreen{
-position:fixed;
-inset:0;
-background:rgba(255,255,255,0.95);
-display:none;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-z-index:9999;
-}
-
-#endScreen h2{
-font-size:clamp(36px,5vw,60px);
-color:#ff7a59;
-margin-bottom:25px;
-}
-
-.play-btn{
-padding:16px 34px;
-font-size:28px;
-border:none;
-border-radius:18px;
-background:#7c3aed;
-color:white;
-cursor:pointer;
+/* PLAY AGAIN */
+#playAgain{
+    display:none;
+    margin-bottom:20px;
+    padding:14px 28px;
+    border:none;
+    border-radius:16px;
+    font-size:24px;
+    background:#ffb703;
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
 }
 
 /* CONFETTI */
-
 .confetti{
-position:fixed;
-width:12px;
-height:12px;
-top:-20px;
-animation:fall linear forwards;
-z-index:99999;
+    position:absolute;
+    width:12px;
+    height:12px;
+    background:red;
+    top:-20px;
+    animation:fall linear forwards;
+}
+
+/* ANIMATIONS */
+@keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-8px);}
+    50%{transform:translateX(8px);}
+    75%{transform:translateX(-8px);}
+    100%{transform:translateX(0);}
+}
+
+@keyframes pop{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+    100%{transform:scale(1);}
+}
+
+@keyframes glow{
+    0%{box-shadow:0 0 5px #2ecc71;}
+    50%{box-shadow:0 0 25px #2ecc71;}
+    100%{box-shadow:0 0 5px #2ecc71;}
 }
 
 @keyframes fall{
-to{
-transform:translateY(110vh) rotate(720deg);
-}
+    to{
+        transform:translateY(110vh) rotate(720deg);
+        opacity:0;
+    }
 }
 
 /* MOBILE */
-
 @media(max-width:768px){
 
-.options{
-gap:10px;
-}
+    #options{
+        gap:10px;
+        padding:5px;
+    }
 
-.option{
-width:48%;
-max-height:280px;
-padding:5px;
-}
+    .option{
+        width:48%;
+        height:52vh;
+    }
 
-.feedback{
-height:45px;
-}
+    #questionBox{
+        padding:8px;
+    }
 
+    #speakBtn{
+        width:48px;
+        height:48px;
+        font-size:22px;
+    }
 }
 
 </style>
@@ -291,128 +252,111 @@ height:45px;
 
 <body>
 
-<!-- SPLASH SCREEN -->
+<div id="gameContainer">
 
-<div id="splash">
-<img src="assets/githubassets/innovine-logo.png">
-</div>
+    <!-- LOGO SCREEN -->
+    <div id="logoScreen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
 
-<!-- GAME -->
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Open and Close</h1>
+        <div class="instruction">
+            Listen and click to the correct picture.
+        </div>
+    </div>
 
-<div id="game">
+    <!-- QUESTION -->
+    <div id="questionBox">
+        <div id="questionText"></div>
+        <button id="speakBtn">🔊</button>
+    </div>
 
-<div class="game-container">
+    <!-- ROUND -->
+    <div id="round"></div>
 
-<div>
-<h1>Open and Close</h1>
+    <!-- OPTIONS -->
+    <div id="options">
+        <div class="option" id="option1">
+            <img id="img1" src="">
+        </div>
 
-<div class="instruction">
-Listen and click to the correct picture.
-</div>
+        <div class="option" id="option2">
+            <img id="img2" src="">
+        </div>
+    </div>
 
-<div class="question-row">
-<div id="question">Which one is open?</div>
+    <!-- FEEDBACK -->
+    <div id="feedback">✔ Good Job!</div>
 
-<button class="speak-btn" onclick="speakQuestion()">
-🔊
-</button>
-</div>
-</div>
+    <!-- PLAY AGAIN -->
+    <button id="playAgain">Play Again</button>
 
-<div class="options">
-
-<div class="option" id="leftOption">
-<img id="leftImg" src="">
-</div>
-
-<div class="option" id="rightOption">
-<img id="rightImg" src="">
-</div>
-
-</div>
-
-<div class="feedback" id="feedback"></div>
-
-</div>
-
-</div>
-
-<!-- END SCREEN -->
-
-<div id="endScreen">
-<h2>Wonderful Job!</h2>
-
-<button class="play-btn" onclick="restartGame()">
-Play Again
-</button>
 </div>
 
 <!-- AUDIO -->
-
 <audio id="rightSound" src="assets/right.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/clap.mp3"></audio>
 
 <script>
-
-/* GAME DATA */
 
 const rounds = [
 
 {
-question:"Which one is open?",
-answer:"open",
-left:"assets/openbox.png",
-right:"assets/closebox.png"
+question:"Click the open box.",
+voice:"Click the open box.",
+images:["assets/openbox.png","assets/closebox.png"],
+correct:0
 },
 
 {
-question:"Which one is closed?",
-answer:"close",
-left:"assets/opendoor.png",
-right:"assets/closedoor.png"
+question:"Click the closed door.",
+voice:"Click the closed door.",
+images:["assets/opendoor.png","assets/closedoor.png"],
+correct:1
 },
 
 {
-question:"Which one is open?",
-answer:"open",
-left:"assets/closeumbrella.png",
-right:"assets/openumbrella.png"
+question:"Click the open umbrella.",
+voice:"Click the open umbrella.",
+images:["assets/openumbrella.png","assets/closeumbrella.png"],
+correct:0
 },
 
 {
-question:"Which one is open?",
-answer:"open",
-left:"assets/openbook.png",
-right:"assets/closebook.png"
+question:"Click the open book.",
+voice:"Click the open book.",
+images:["assets/openbook.png","assets/closebook.png"],
+correct:0
 },
 
 {
-question:"Which one is closed?",
-answer:"close",
-left:"assets/closewindow.png",
-right:"assets/openwindow.png"
+question:"Click the closed window.",
+voice:"Click the closed window.",
+images:["assets/openwindow.png","assets/closewindow.png"],
+correct:1
 },
 
 {
-question:"Which one is closed?",
-answer:"close",
-left:"assets/openlid.png",
-right:"assets/closelid.png"
+question:"Click the closed lid.",
+voice:"Click the closed lid.",
+images:["assets/openlid.png","assets/closelid.png"],
+correct:1
 },
 
 {
-question:"Which one is open?",
-answer:"open",
-left:"assets/openchest.png",
-right:"assets/closechest.png"
+question:"Click the open chest.",
+voice:"Click the open chest.",
+images:["assets/openchest.png","assets/closechest.png"],
+correct:0
 },
 
 {
-question:"Which one is closed?",
-answer:"close",
-left:"assets/opencupboard.png",
-right:"assets/closecupboard.png"
+question:"Click the closed cupboard.",
+voice:"Click the closed cupboard.",
+images:["assets/opencupboard.png","assets/closecupboard.png"],
+correct:1
 }
 
 ];
@@ -420,224 +364,206 @@ right:"assets/closecupboard.png"
 let currentRound = 0;
 let wrongAttempts = 0;
 
-const questionEl = document.getElementById("question");
-const leftImg = document.getElementById("leftImg");
-const rightImg = document.getElementById("rightImg");
-const leftOption = document.getElementById("leftOption");
-const rightOption = document.getElementById("rightOption");
+const questionText = document.getElementById("questionText");
+const img1 = document.getElementById("img1");
+const img2 = document.getElementById("img2");
+const option1 = document.getElementById("option1");
+const option2 = document.getElementById("option2");
 const feedback = document.getElementById("feedback");
+const roundText = document.getElementById("round");
+const playAgainBtn = document.getElementById("playAgain");
 
 const rightSound = document.getElementById("rightSound");
 const wrongSound = document.getElementById("wrongSound");
-const clapSound = document.getElementById("clapSound");
 
-/* START GAME AFTER 5 SECONDS */
+const colors = ["color1","color2","color3","color4"];
 
-setTimeout(()=>{
-
-document.getElementById("splash").style.display="none";
-document.getElementById("game").style.display="block";
-
-loadRound();
-
-},5000);
-
-/* LOAD ROUND */
+function randomColorClass(){
+    return colors[Math.floor(Math.random()*colors.length)];
+}
 
 function loadRound(){
 
-feedback.innerHTML="";
-wrongAttempts=0;
+    wrongAttempts = 0;
 
-leftOption.className="option";
-rightOption.className="option";
+    option1.classList.remove("glow");
+    option2.classList.remove("glow");
 
-const round = rounds[currentRound];
+    const round = rounds[currentRound];
 
-questionEl.innerText = round.question;
+    questionText.className = "";
+    questionText.classList.add(randomColorClass());
 
-leftImg.src = round.left;
-rightImg.src = round.right;
+    questionText.textContent = round.question;
 
-leftOption.onclick = ()=>checkAnswer("left");
-rightOption.onclick = ()=>checkAnswer("right");
+    img1.src = round.images[0];
+    img2.src = round.images[1];
 
-speakQuestion();
+    roundText.textContent = `Round ${currentRound+1} / 8`;
 
+    speak(round.voice);
 }
 
-/* VOICE */
+function speak(text){
 
-function speakQuestion(){
+    speechSynthesis.cancel();
 
-speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
 
-const speech = new SpeechSynthesisUtterance(
-questionEl.innerText
-);
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
 
-speech.rate = 0.85;
-speech.pitch = 1;
-speech.volume = 1;
-
-speechSynthesis.speak(speech);
-
+    speechSynthesis.speak(utterance);
 }
 
-/* CHECK ANSWER */
+document.getElementById("speakBtn").addEventListener("click", ()=>{
 
-function checkAnswer(side){
+    speak(rounds[currentRound].voice);
 
-const round = rounds[currentRound];
+});
 
-let selectedType = "";
+function handleAnswer(selected){
 
-if(side==="left"){
+    const correct = rounds[currentRound].correct;
 
-selectedType = round.left.includes("open")
-? "open"
-: "close";
+    if(selected === correct){
 
-}else{
+        rightSound.play();
 
-selectedType = round.right.includes("open")
-? "open"
-: "close";
+        if(navigator.vibrate){
+            navigator.vibrate(100);
+        }
 
+        if(correct===0){
+            option1.classList.add("correct");
+        }else{
+            option2.classList.add("correct");
+        }
+
+        feedback.style.display = "block";
+
+        setTimeout(()=>{
+
+            feedback.style.display = "none";
+
+            option1.classList.remove("correct");
+            option2.classList.remove("correct");
+
+            currentRound++;
+
+            if(currentRound < rounds.length){
+                loadRound();
+            }else{
+                endGame();
+            }
+
+        },1800);
+
+    }else{
+
+        wrongSound.play();
+
+        wrongAttempts++;
+
+        if(selected===0){
+            option1.classList.add("wrong");
+
+            setTimeout(()=>{
+                option1.classList.remove("wrong");
+            },400);
+
+        }else{
+
+            option2.classList.add("wrong");
+
+            setTimeout(()=>{
+                option2.classList.remove("wrong");
+            },400);
+        }
+
+        if(wrongAttempts >=2){
+
+            if(correct===0){
+                option1.classList.add("glow");
+            }else{
+                option2.classList.add("glow");
+            }
+        }
+    }
 }
 
-const selectedOption =
-side==="left"
-? leftOption
-: rightOption;
-
-const correctOption =
-round.left.includes(round.answer)
-? leftOption
-: rightOption;
-
-/* CORRECT */
-
-if(selectedType === round.answer){
-
-rightSound.currentTime=0;
-rightSound.play();
-
-clapSound.currentTime=0;
-clapSound.play();
-
-selectedOption.classList.add("correct");
-
-feedback.innerHTML =
-'<span class="tick">✅</span>Good job!';
-
-setTimeout(()=>{
-
-currentRound++;
-
-if(currentRound >= rounds.length){
-
-endGame();
-
-}else{
-
-loadRound();
-
-}
-
-},1800);
-
-}
-
-/* WRONG */
-
-else{
-
-wrongSound.currentTime=0;
-wrongSound.play();
-
-selectedOption.classList.add("wrong");
-
-setTimeout(()=>{
-
-selectedOption.classList.remove("wrong");
-
-},400);
-
-wrongAttempts++;
-
-if(wrongAttempts >= 2){
-
-correctOption.classList.add("glow");
-
-}
-
-}
-
-}
-
-/* END GAME */
+option1.addEventListener("click", ()=>handleAnswer(0));
+option2.addEventListener("click", ()=>handleAnswer(1));
 
 function endGame(){
 
-document.getElementById("endScreen").style.display="flex";
+    questionText.textContent = "Wonderful Job!";
+    roundText.textContent = "";
 
-createConfetti();
+    document.getElementById("options").style.display = "none";
 
-const speech = new SpeechSynthesisUtterance(
-"Wonderful job! You finished the game!"
-);
+    feedback.style.display = "block";
+    feedback.innerHTML = "🎉 Amazing! 🎉";
 
-speech.rate = 0.9;
+    createConfetti();
 
-speechSynthesis.speak(speech);
+    playAgainBtn.style.display = "block";
 
+    speak("Amazing! You completed the game!");
 }
 
-/* PLAY AGAIN */
+playAgainBtn.addEventListener("click", ()=>{
 
-function restartGame(){
+    currentRound = 0;
 
-currentRound = 0;
+    document.getElementById("options").style.display = "flex";
 
-document.getElementById("endScreen").style.display="none";
+    feedback.style.display = "none";
 
-loadRound();
+    playAgainBtn.style.display = "none";
 
-}
-
-/* CONFETTI */
+    loadRound();
+});
 
 function createConfetti(){
 
-for(let i=0;i<120;i++){
+    for(let i=0;i<120;i++){
 
-const confetti = document.createElement("div");
+        const confetti = document.createElement("div");
 
-confetti.classList.add("confetti");
+        confetti.classList.add("confetti");
 
-confetti.style.left =
-Math.random()*100 + "vw";
+        confetti.style.left = Math.random()*100 + "vw";
 
-confetti.style.background =
-["#ff6b6b","#ffd166","#06d6a0","#4dabf7","#9b5de5"]
-[Math.floor(Math.random()*5)];
+        confetti.style.background =
+        `hsl(${Math.random()*360}, 90%, 60%)`;
 
-confetti.style.animationDuration =
-(Math.random()*3 + 2) + "s";
+        confetti.style.animationDuration =
+        (Math.random()*3 + 2) + "s";
 
-document.body.appendChild(confetti);
+        confetti.style.width =
+        confetti.style.height =
+        (Math.random()*10 + 6) + "px";
 
+        document.body.appendChild(confetti);
+
+        setTimeout(()=>{
+            confetti.remove();
+        },5000);
+    }
+}
+
+/* START GAME AFTER 5 SECONDS */
 setTimeout(()=>{
-confetti.remove();
+
+    document.getElementById("logoScreen").style.display="none";
+
+    loadRound();
+
 },5000);
-
-}
-
-}
 
 </script>
 
 </body>
 </html>
-```
