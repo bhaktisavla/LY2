@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Open and Close Game</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body{
+  font-family: Arial, sans-serif;
+  overflow:hidden;
+  background:#f7efe2;
+  height:100vh;
+}
+
+/* BACKGROUND */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(rgba(255,255,255,0.88), rgba(255,255,255,0.88)),
+    url("assets/background.png") center/cover no-repeat;
+  z-index:-2;
+}
+
+/* SPLASH SCREEN */
+#splash{
+  position:fixed;
+  inset:0;
+  background:#fff7ef;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+#splash img{
+  width:min(320px,70vw);
+  animation:pop 1.5s infinite alternate;
+}
+
+@keyframes pop{
+  from{transform:scale(1);}
+  to{transform:scale(1.06);}
+}
+
+/* MAIN GAME */
+#game{
+  display:none;
+  height:100vh;
+  width:100vw;
+  padding:10px;
+}
+
+.game-container{
+  height:100%;
+  width:100%;
+  background:rgba(255,255,255,0.93);
+  border-radius:24px;
+  border:5px solid #ffd48d;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+}
+
+/* HEADER */
+.header{
+  width:100%;
+  text-align:center;
+}
+
+h1{
+  font-size:clamp(28px,4vw,44px);
+  color:#ff7b54;
+  margin-bottom:4px;
+}
+
+.instruction{
+  font-size:clamp(16px,2vw,24px);
+  color:#4b5563;
+  font-weight:bold;
+}
+
+/* QUESTION */
+.question-box{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-top:5px;
+  flex-wrap:wrap;
+}
+
+#question{
+  font-size:clamp(20px,3vw,34px);
+  color:#7c3aed;
+  text-align:center;
+  font-weight:bold;
+}
+
+.speak-btn{
+  border:none;
+  background:#ffd166;
+  border-radius:50%;
+  width:52px;
+  height:52px;
+  font-size:24px;
+  cursor:pointer;
+  box-shadow:0 4px 8px rgba(0,0,0,0.15);
+}
+
+.speak-btn:active{
+  transform:scale(0.95);
+}
+
+/* OPTIONS */
+.options{
+  width:100%;
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:20px;
+  padding:10px 0;
+}
+
+.option{
+  width:42%;
+  max-width:420px;
+  height:100%;
+  max-height:420px;
+  background:#fff;
+  border-radius:24px;
+  border:5px solid transparent;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  transition:0.2s;
+  position:relative;
+  overflow:hidden;
+}
+
+.option img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:10px;
+}
+
+.option:hover{
+  transform:scale(1.02);
+}
+
+.correct{
+  border-color:#4ade80;
+}
+
+.wrong{
+  animation:shake 0.35s;
+  border-color:#ef4444;
+}
+
+.glow{
+  animation:glow 1s infinite;
+}
+
+@keyframes shake{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-8px);}
+  50%{transform:translateX(8px);}
+  75%{transform:translateX(-8px);}
+  100%{transform:translateX(0);}
+}
+
+@keyframes glow{
+  0%{box-shadow:0 0 5px #22c55e;}
+  50%{box-shadow:0 0 25px #22c55e;}
+  100%{box-shadow:0 0 5px #22c55e;}
+}
+
+/* FEEDBACK */
+.feedback{
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(24px,3vw,40px);
+  font-weight:bold;
+  color:#16a34a;
+}
+
+.tick{
+  font-size:55px;
+}
+
+/* END SCREEN */
+#endScreen{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,0.96);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:999;
+}
+
+#endScreen h2{
+  font-size:clamp(34px,5vw,60px);
+  color:#ff7b54;
+  margin-bottom:20px;
+}
+
+.play-btn{
+  padding:16px 36px;
+  font-size:28px;
+  border:none;
+  border-radius:18px;
+  background:#7c3aed;
+  color:white;
+  cursor:pointer;
+}
+
+/* CONFETTI */
+.confetti{
+  position:fixed;
+  width:12px;
+  height:12px;
+  top:-10px;
+  animation:fall linear forwards;
+  z-index:9999;
+}
+
+@keyframes fall{
+  to{
+    transform:translateY(110vh) rotate(720deg);
+  }
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+  .options{
+    gap:10px;
+  }
+
+  .option{
+    width:48%;
+    max-height:300px;
+  }
+
+  .feedback{
+    height:45px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/githubassets/innovine-logo.png" alt="Innovine Logo">
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="game-container">
+
+    <div class="header">
+      <h1>Open and Close</h1>
+      <div class="instruction">
+        Listen and click to the correct picture.
+      </div>
+    </div>
+
+    <div class="question-box">
+      <div id="question">Which one is open?</div>
+      <button class="speak-btn" onclick="speakQuestion()">🔊</button>
+    </div>
+
+    <div class="options">
+
+      <div class="option" id="leftOption">
+        <img id="leftImg" src="">
+      </div>
+
+      <div class="option" id="rightOption">
+        <img id="rightImg" src="">
+      </div>
+
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+  </div>
+</div>
+
+<!-- END -->
+<div id="endScreen">
+  <h2>Wonderful Job!</h2>
+  <button class="play-btn" onclick="restartGame()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="rightSound" src="assets/right.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/clap.mp3"></audio>
+
+<script>
+
+const rounds = [
+
+{
+question:"Which one is open?",
+answer:"open",
+left:"assets/box-open.png",
+right:"assets/box-close.png"
+},
+
+{
+question:"Which one is closed?",
+answer:"close",
+left:"assets/door-open.png",
+right:"assets/door-close.png"
+},
+
+{
+question:"Which one is open?",
+answer:"open",
+left:"assets/umbrella-close.png",
+right:"assets/umbrella-open.png"
+},
+
+{
+question:"Which one is open?",
+answer:"open",
+left:"assets/book-open.png",
+right:"assets/book-close.png"
+},
+
+{
+question:"Which one is closed?",
+answer:"close",
+left:"assets/window-close.png",
+right:"assets/window-open.png"
+},
+
+{
+question:"Which one is closed?",
+answer:"close",
+left:"assets/lid-open.png",
+right:"assets/lid-close.png"
+},
+
+{
+question:"Which one is open?",
+answer:"open",
+left:"assets/chest-open.png",
+right:"assets/chest-close.png"
+},
+
+{
+question:"Which one is closed?",
+answer:"close",
+left:"assets/cupboard-open.png",
+right:"assets/cupboard-close.png"
+}
+
+];
+
+let currentRound = 0;
+let wrongAttempts = 0;
+
+const questionEl = document.getElementById("question");
+const leftImg = document.getElementById("leftImg");
+const rightImg = document.getElementById("rightImg");
+const leftOption = document.getElementById("leftOption");
+const rightOption = document.getElementById("rightOption");
+const feedback = document.getElementById("feedback");
+
+const rightSound = document.getElementById("rightSound");
+const wrongSound = document.getElementById("wrongSound");
+const clapSound = document.getElementById("clapSound");
+
+/* START AFTER SPLASH */
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadRound();
+},5000);
+
+/* LOAD ROUND */
+function loadRound(){
+
+  feedback.innerHTML = "";
+  wrongAttempts = 0;
+
+  leftOption.className = "option";
+  rightOption.className = "option";
+
+  const round = rounds[currentRound];
+
+  questionEl.innerText = round.question;
+
+  leftImg.src = round.left;
+  rightImg.src = round.right;
+
+  leftOption.onclick = ()=>checkAnswer("left");
+  rightOption.onclick = ()=>checkAnswer("right");
+
+  speakQuestion();
+}
+
+/* SPEAK */
+function speakQuestion(){
+
+  speechSynthesis.cancel();
+
+  const text = questionEl.innerText;
+
+  const speech = new SpeechSynthesisUtterance(text);
+
+  speech.rate = 0.85;
+  speech.pitch = 1;
+  speech.volume = 1;
+
+  speechSynthesis.speak(speech);
+}
+
+/* CHECK */
+function checkAnswer(side){
+
+  const round = rounds[currentRound];
+
+  let selectedType = "";
+
+  if(side==="left"){
+    selectedType = round.left.includes("open") ? "open" : "close";
+  }else{
+    selectedType = round.right.includes("open") ? "open" : "close";
+  }
+
+  const selectedOption = side==="left" ? leftOption : rightOption;
+  const correctOption =
+    round.left.includes(round.answer)
+    ? leftOption
+    : rightOption;
+
+  if(selectedType === round.answer){
+
+    rightSound.currentTime = 0;
+    rightSound.play();
+
+    clapSound.currentTime = 0;
+    clapSound.play();
+
+    selectedOption.classList.add("correct");
+
+    feedback.innerHTML = `<span class="tick">✅</span> Good job!`;
+
+    setTimeout(()=>{
+
+      currentRound++;
+
+      if(currentRound >= rounds.length){
+        endGame();
+      }else{
+        loadRound();
+      }
+
+    },1800);
+
+  }else{
+
+    wrongSound.currentTime = 0;
+    wrongSound.play();
+
+    selectedOption.classList.add("wrong");
+
+    setTimeout(()=>{
+      selectedOption.classList.remove("wrong");
+    },400);
+
+    wrongAttempts++;
+
+    if(wrongAttempts >= 2){
+      correctOption.classList.add("glow");
+    }
+  }
+}
+
+/* END GAME */
+function endGame(){
+
+  createConfetti();
+
+  document.getElementById("endScreen").style.display="flex";
+
+  const speech = new SpeechSynthesisUtterance(
+    "Wonderful job! You finished the game!"
+  );
+
+  speech.rate = 0.9;
+
+  speechSynthesis.speak(speech);
+}
+
+/* PLAY AGAIN */
+function restartGame(){
+
+  currentRound = 0;
+
+  document.getElementById("endScreen").style.display="none";
+
+  loadRound();
+}
+
+/* CONFETTI */
+function createConfetti(){
+
+  for(let i=0;i<120;i++){
+
+    const confetti = document.createElement("div");
+
+    confetti.classList.add("confetti");
+
+    confetti.style.left = Math.random()*100 + "vw";
+
+    confetti.style.background =
+      ["#f87171","#60a5fa","#34d399","#fbbf24","#c084fc"]
+      [Math.floor(Math.random()*5)];
+
+    confetti.style.animationDuration =
+      (Math.random()*3 + 2) + "s";
+
+    document.body.appendChild(confetti);
+
+    setTimeout(()=>{
+      confetti.remove();
+    },5000);
+  }
+}
+
+</script>
+
+</body>
+</html>
