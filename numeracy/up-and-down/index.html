@@ -649,29 +649,36 @@ Wrong child will fail.
 
 if(hitCount >= 5){
 
-rightSound.currentTime = 0;
+    rightSound.currentTime = 0;
 
-rightSound.play();
+    rightSound.play();
 
-rightSound.onended = ()=>{
+    nextMessage.style.display='block';
 
-    clapSound.currentTime = 0;
+    rightSound.onended = ()=>{
 
-    clapSound.play();
+        clapSound.currentTime = 0;
 
-};
+        clapSound.play();
 
-nextMessage.style.display='block';
+        clapSound.onended = ()=>{
 
-setTimeout(()=>{
+            nextMessage.style.display='none';
 
-nextMessage.style.display='none';
+            currentRound++;
 
-currentRound++;
+            if(currentRound >= rounds.length){
 
-if(currentRound >= rounds.length){
+                showFinishScreen();
 
-showFinishScreen();
+            }else{
+
+                loadRound();
+            }
+
+        };
+
+    };
 
 }else{
 
@@ -768,39 +775,10 @@ gameScreen.style.display='block';
 
 loadRound();
 });
-function testClap(){
-
-    console.log(clapSound.src);
-
-    clapSound.currentTime = 0;
-
-    const p = clapSound.play();
-
-    if(p){
-
-        p.then(()=>{
-            console.log("PLAYING");
-        })
-
-        .catch(err=>{
-            console.log(err);
-            alert(err.message);
-        });
-    }
-}
   
 </script>
 
-<button onclick="testClap()"
-style="
-position:fixed;
-top:10px;
-right:10px;
-z-index:99999;
-padding:20px;
-font-size:24px;">
-TEST CLAP
-</button>
+
 
 </body>
 </html>
