@@ -650,7 +650,6 @@ Wrong child will fail.
 if(hitCount >= 5){
 
     rightSound.currentTime = 0;
-
     rightSound.play();
 
     nextMessage.style.display='block';
@@ -658,7 +657,6 @@ if(hitCount >= 5){
     rightSound.onended = ()=>{
 
         clapSound.currentTime = 0;
-
         clapSound.play();
 
         clapSound.onended = ()=>{
@@ -674,6 +672,7 @@ if(hitCount >= 5){
             }else{
 
                 loadRound();
+
             }
 
         };
@@ -682,24 +681,17 @@ if(hitCount >= 5){
 
 }else{
 
-loadRound();
+    wrongSound.currentTime = 0;
+    wrongSound.play();
+
+    setTimeout(()=>{
+
+        clearCanvas();
+
+    },700);
+
 }
 
-},1500);
-
-}else{
-
-wrongSound.currentTime = 0;
-
-wrongSound.play();
-
-setTimeout(()=>{
-
-clearCanvas();
-
-},700);
-}
-}
 
 /* ====================================
 FINISH
