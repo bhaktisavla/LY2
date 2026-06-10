@@ -207,7 +207,24 @@ transform:translateY(120vh) rotate(720deg);
 
 <div id="logoScreen">
 
+<div style="text-align:center">
+
 <img src="assets/innovine-logo.png">
+
+<br><br>
+
+<button id="startBtn"
+style="
+padding:15px 30px;
+font-size:24px;
+border:none;
+border-radius:15px;
+background:#ffb703;
+color:white;">
+Start Game
+</button>
+
+</div>
 
 </div>
 
@@ -255,6 +272,10 @@ Play Again
 
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
+<audio id="clapSound"
+src="assets/freesound_commuity-claps44774.mp3">
+
+</audio>
 <script>
 
 /* ====================================
@@ -356,6 +377,9 @@ document.getElementById('rightSound');
 
 const wrongSound =
 document.getElementById('wrongSound');
+
+const clapSound =
+document.getElementById('clapSound');
 
 const canvas =
 document.getElementById('drawCanvas');
@@ -618,8 +642,15 @@ Wrong child will fail.
 if(hitCount >= 5){
 
 rightSound.currentTime = 0;
-
 rightSound.play();
+
+setTimeout(()=>{
+
+clapSound.currentTime = 0;
+
+clapSound.play();
+
+},400);
 
 nextMessage.style.display='block';
 
