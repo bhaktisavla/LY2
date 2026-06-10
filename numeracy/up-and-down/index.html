@@ -272,15 +272,7 @@ Play Again
 
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
-<audio
-id="clapSound"
-preload="auto">
 
-<source
-src="assets/freesound_community-claps-44774.mp3"
-type="audio/mpeg">
-
-</audio>
 <script>
 
 /* ====================================
@@ -654,30 +646,23 @@ if(hitCount >= 5){
 
     nextMessage.style.display='block';
 
-    rightSound.onended = ()=>{
+rightSound.onended = ()=>{
 
-        clapSound.currentTime = 0;
-        clapSound.play();
+    nextMessage.style.display='none';
 
-        clapSound.onended = ()=>{
+    currentRound++;
 
-            nextMessage.style.display='none';
+    if(currentRound >= rounds.length){
 
-            currentRound++;
+        showFinishScreen();
 
-            if(currentRound >= rounds.length){
+    }else{
 
-                showFinishScreen();
+        loadRound();
 
-            }else{
+    }
 
-                loadRound();
-
-            }
-
-        };
-
-    };
+};
 
 }else{
 
