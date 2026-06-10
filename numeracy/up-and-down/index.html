@@ -386,6 +386,8 @@ document.getElementById('wrongSound');
 const clapSound =
 document.getElementById('clapSound');
 
+console.log("CLAP FILE:",clapSound.currentSrc);
+
 const canvas =
 document.getElementById('drawCanvas');
 
@@ -418,15 +420,16 @@ resizeCanvas
 START GAME
 ==================================== */
 
-setTimeout(()=>{
+document.getElementById("startBtn")
+.addEventListener("click",()=>{
 
-logoScreen.style.display='none';
+    logoScreen.style.display='none';
 
-gameScreen.style.display='block';
+    gameScreen.style.display='block';
 
-loadRound();
+    loadRound();
 
-},5000);
+});
 
 /* ====================================
 LOAD ROUND
@@ -765,18 +768,25 @@ gameScreen.style.display='block';
 
 loadRound();
 });
-
 function testClap(){
+
+    console.log(clapSound.src);
 
     clapSound.currentTime = 0;
 
-    clapSound.play()
-    .then(()=>{
-        console.log("Clap sound playing");
-    })
-    .catch((err)=>{
-        console.log("Clap error:", err);
-    });
+    const p = clapSound.play();
+
+    if(p){
+
+        p.then(()=>{
+            console.log("PLAYING");
+        })
+
+        .catch(err=>{
+            console.log(err);
+            alert(err.message);
+        });
+    }
 }
   
 </script>
@@ -787,8 +797,9 @@ position:fixed;
 top:10px;
 right:10px;
 z-index:99999;
-padding:10px 15px;">
-Test Clap
+padding:20px;
+font-size:24px;">
+TEST CLAP
 </button>
 
 </body>
