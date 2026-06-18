@@ -251,15 +251,25 @@ cursor:pointer;
 }
 
 #confettiCanvas{
-position:absolute;
-inset:0;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
 pointer-events:none;
+z-index:9999;
 }
 
 #finishScreen h1{
 font-size:clamp(40px,7vw,80px);
 color:#ff006e;
 margin-bottom:20px;
+}
+
+#finishScreen{
+z-index:5000;
+background:rgba(255,255,255,.2);
+backdrop-filter:blur(2px);
 }
 
 .play-again{
@@ -1323,23 +1333,14 @@ canvas.height
 
 confettiPieces.forEach(p=>{
 
-ctx.beginPath();
+ctx.fillStyle=p.color;
 
-ctx.lineWidth=p.r;
-
-ctx.strokeStyle=p.color;
-
-ctx.moveTo(
-p.x+p.tilt+p.r/2,
-p.y
+ctx.fillRect(
+p.x,
+p.y,
+p.r,
+p.r*1.5
 );
-
-ctx.lineTo(
-p.x+p.tilt,
-p.y+p.tilt+p.r/2
-);
-
-ctx.stroke();
 
 });
 
